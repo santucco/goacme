@@ -101,7 +101,6 @@ import (
 	"os"
 	"os/exec"
 	"testing"
-	"syscall"
 	@<Test specific imports@>
 )@#
 
@@ -188,9 +187,12 @@ func (this *Window) Close() error {
 @ It seems using of FUSE breaks transactional model file i/o from Plan9,
 so sometimes we should sleep a bit in tests to get \.{Acme} a possibility 
 to synchronize its internal state.
+@<Test specific imports@>=
+"time"
 
+@	
 @<Sleep a bit@>=
-syscall.Nanosleep(&syscall.Timespec{Sec: 1}, nil)	
+time.Sleep(time.Second)
 
 @
 @<Test routines@>=
@@ -815,12 +817,6 @@ if (ev.flag&8)==8 {
 @*1 EventChannel. 
 @<|Window| struct members@>=
 ch	chan *Event
-
-@
-@<Releasing of |Window| members@>=
-if this.ch!=nil {
-	close(this.ch)
-}
 
 @
 @c
