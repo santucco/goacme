@@ -11,13 +11,12 @@ import(
 "os"
 "os/exec"
 "testing"
-"syscall"
 
 
 /*11:*/
 
 
-//line goacme.w:185
+//line goacme.w:184
 
 "fmt"
 
@@ -27,20 +26,33 @@ import(
 
 
 
-/*16:*/
+/*12:*/
 
 
-//line goacme.w:238
+//line goacme.w:190
+
+"time"
+
+
+
+/*:12*/
+
+
+
+/*17:*/
+
+
+//line goacme.w:240
 
 "bytes"
 "errors"
 
 
 
-/*:16*/
+/*:17*/
 
 
-//line goacme.w:105
+//line goacme.w:104
 
 )
 
@@ -61,28 +73,28 @@ t.Fatal(err)
 
 
 
-/*13:*/
+/*14:*/
 
 
-//line goacme.w:196
+//line goacme.w:198
 
 func TestNewOpen(t*testing.T){
 prepare(t)
 
 
-/*12:*/
+/*13:*/
 
 
-//line goacme.w:192
+//line goacme.w:194
 
-syscall.Nanosleep(&syscall.Timespec{Sec:1},nil)
-
-
-
-/*:12*/
+time.Sleep(time.Second)
 
 
-//line goacme.w:199
+
+/*:13*/
+
+
+//line goacme.w:201
 
 w,err:=New()
 if err!=nil{
@@ -99,31 +111,31 @@ f.Close()
 
 
 
-/*:13*/
+/*:14*/
 
 
 
-/*17:*/
+/*18:*/
 
 
-//line goacme.w:243
+//line goacme.w:245
 
 func TestReadWrite(t*testing.T){
 
 
-/*12:*/
+/*13:*/
 
 
-//line goacme.w:192
+//line goacme.w:194
 
-syscall.Nanosleep(&syscall.Timespec{Sec:1},nil)
-
-
-
-/*:12*/
+time.Sleep(time.Second)
 
 
-//line goacme.w:245
+
+/*:13*/
+
+
+//line goacme.w:247
 
 w,err:=New()
 if err!=nil{
@@ -154,31 +166,31 @@ t.Fatal(errors.New("buffers don't match"))
 
 
 
-/*:17*/
+/*:18*/
 
 
 
-/*26:*/
+/*27:*/
 
 
-//line goacme.w:354
+//line goacme.w:356
 
 func TestPipeTo(t*testing.T){
 
 
-/*12:*/
+/*13:*/
 
 
-//line goacme.w:192
+//line goacme.w:194
 
-syscall.Nanosleep(&syscall.Timespec{Sec:1},nil)
-
-
-
-/*:12*/
+time.Sleep(time.Second)
 
 
-//line goacme.w:356
+
+/*:13*/
+
+
+//line goacme.w:358
 
 w,err:=New()
 if err!=nil{
@@ -211,31 +223,31 @@ t.Fatal(errors.New(fmt.Sprintf("buffers don't match: %q and %q",s,string(b))))
 
 
 
-/*:26*/
+/*:27*/
 
 
 
-/*28:*/
+/*29:*/
 
 
-//line goacme.w:414
+//line goacme.w:416
 
 func TestPipeFrom(t*testing.T){
 
 
-/*12:*/
+/*13:*/
 
 
-//line goacme.w:192
+//line goacme.w:194
 
-syscall.Nanosleep(&syscall.Timespec{Sec:1},nil)
-
-
-
-/*:12*/
+time.Sleep(time.Second)
 
 
-//line goacme.w:416
+
+/*:13*/
+
+
+//line goacme.w:418
 
 w,err:=New()
 if err!=nil{
@@ -255,19 +267,19 @@ t.Fatal(err)
 defer f.Close()
 
 
-/*12:*/
+/*13:*/
 
 
-//line goacme.w:192
+//line goacme.w:194
 
-syscall.Nanosleep(&syscall.Timespec{Sec:1},nil)
-
-
-
-/*:12*/
+time.Sleep(time.Second)
 
 
-//line goacme.w:433
+
+/*:13*/
+
+
+//line goacme.w:435
 
 p,err:=w.PipeFrom("body",f,"cat")
 if err!=nil{
@@ -275,19 +287,19 @@ t.Fatal(err)
 }
 
 
-/*12:*/
+/*13:*/
 
 
-//line goacme.w:192
+//line goacme.w:194
 
-syscall.Nanosleep(&syscall.Timespec{Sec:1},nil)
-
-
-
-/*:12*/
+time.Sleep(time.Second)
 
 
-//line goacme.w:438
+
+/*:13*/
+
+
+//line goacme.w:440
 
 w.Del(true)
 w.Close()
@@ -308,31 +320,31 @@ t.Fatal(errors.New(fmt.Sprintf("buffers don't match: %q and %q",s,string(b))))
 
 
 
-/*:28*/
+/*:29*/
 
 
 
-/*30:*/
+/*31:*/
 
 
-//line goacme.w:484
+//line goacme.w:486
 
 func TestSysRun(t*testing.T){
 
 
-/*12:*/
+/*13:*/
 
 
-//line goacme.w:192
+//line goacme.w:194
 
-syscall.Nanosleep(&syscall.Timespec{Sec:1},nil)
-
-
-
-/*:12*/
+time.Sleep(time.Second)
 
 
-//line goacme.w:486
+
+/*:13*/
+
+
+//line goacme.w:488
 
 s:="test"
 f,p,err:=SysRun("echo","-n",s)
@@ -343,19 +355,19 @@ p.Wait()
 p.Release()
 
 
-/*12:*/
+/*13:*/
 
 
-//line goacme.w:192
+//line goacme.w:194
 
-syscall.Nanosleep(&syscall.Timespec{Sec:1},nil)
-
-
-
-/*:12*/
+time.Sleep(time.Second)
 
 
-//line goacme.w:494
+
+/*:13*/
+
+
+//line goacme.w:496
 
 b:=make([]byte,10)
 if _,err:=f.Seek(0,0);err!=nil{
@@ -373,31 +385,31 @@ t.Fatal(errors.New(fmt.Sprintf("buffers don't match: %q and %q",s,string(b))))
 
 
 
-/*:30*/
+/*:31*/
 
 
 
-/*32:*/
+/*33:*/
 
 
-//line goacme.w:526
+//line goacme.w:528
 
 func TestDel(t*testing.T){
 
 
-/*12:*/
+/*13:*/
 
 
-//line goacme.w:192
+//line goacme.w:194
 
-syscall.Nanosleep(&syscall.Timespec{Sec:1},nil)
-
-
-
-/*:12*/
+time.Sleep(time.Second)
 
 
-//line goacme.w:528
+
+/*:13*/
+
+
+//line goacme.w:530
 
 w,err:=New()
 if err!=nil{
@@ -405,37 +417,37 @@ t.Fatal(err)
 }
 
 
-/*12:*/
+/*13:*/
 
 
-//line goacme.w:192
+//line goacme.w:194
 
-syscall.Nanosleep(&syscall.Timespec{Sec:1},nil)
-
-
-
-/*:12*/
+time.Sleep(time.Second)
 
 
-//line goacme.w:533
+
+/*:13*/
+
+
+//line goacme.w:535
 
 w.Del(true)
 w.Close()
 
 
-/*12:*/
+/*13:*/
 
 
-//line goacme.w:192
+//line goacme.w:194
 
-syscall.Nanosleep(&syscall.Timespec{Sec:1},nil)
-
-
-
-/*:12*/
+time.Sleep(time.Second)
 
 
-//line goacme.w:536
+
+/*:13*/
+
+
+//line goacme.w:538
 
 if _,err:=Open(w.id);err==nil{
 t.Fatal(errors.New(fmt.Sprintf("window %d is still opened",w.id)))
@@ -445,49 +457,49 @@ t.Fatal(errors.New(fmt.Sprintf("window %d is still opened",w.id)))
 
 
 
-/*:32*/
+/*:33*/
 
 
 
-/*39:*/
+/*40:*/
 
 
-//line goacme.w:595
+//line goacme.w:597
 
 func TestDeleteAll(t*testing.T){
 
 
-/*12:*/
+/*13:*/
 
 
-//line goacme.w:192
+//line goacme.w:194
 
-syscall.Nanosleep(&syscall.Timespec{Sec:1},nil)
-
-
-
-/*:12*/
+time.Sleep(time.Second)
 
 
-//line goacme.w:597
+
+/*:13*/
+
+
+//line goacme.w:599
 
 var l[10]int
 for i:=0;i<len(l);i++{
 
 
-/*12:*/
+/*13:*/
 
 
-//line goacme.w:192
+//line goacme.w:194
 
-syscall.Nanosleep(&syscall.Timespec{Sec:1},nil)
-
-
-
-/*:12*/
+time.Sleep(time.Second)
 
 
-//line goacme.w:600
+
+/*:13*/
+
+
+//line goacme.w:602
 
 w,err:=New()
 if err!=nil{
@@ -498,19 +510,19 @@ l[i]= w.id
 DeleteAll()
 
 
-/*12:*/
+/*13:*/
 
 
-//line goacme.w:192
+//line goacme.w:194
 
-syscall.Nanosleep(&syscall.Timespec{Sec:1},nil)
-
-
-
-/*:12*/
+time.Sleep(time.Second)
 
 
-//line goacme.w:608
+
+/*:13*/
+
+
+//line goacme.w:610
 
 for _,v:=range l{
 _,err:=Open(v)
@@ -522,31 +534,31 @@ t.Fatal(errors.New(fmt.Sprintf("window %d is still opened",v)))
 
 
 
-/*:39*/
+/*:40*/
 
 
 
 /*65:*/
 
 
-//line goacme.w:905
+//line goacme.w:901
 
 func TestEvent(t*testing.T){
 
 
-/*12:*/
+/*13:*/
 
 
-//line goacme.w:192
+//line goacme.w:194
 
-syscall.Nanosleep(&syscall.Timespec{Sec:1},nil)
-
-
-
-/*:12*/
+time.Sleep(time.Second)
 
 
-//line goacme.w:907
+
+/*:13*/
+
+
+//line goacme.w:903
 
 w,err:=New()
 if err!=nil{
@@ -600,7 +612,7 @@ t.Fatal(err)
 /*:65*/
 
 
-//line goacme.w:123
+//line goacme.w:122
 
 
 
