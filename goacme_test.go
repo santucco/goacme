@@ -10,27 +10,17 @@ package goacme
 import(
 "os"
 "os/exec"
+"code.google.com/p/goplan9/plan9"
+"code.google.com/p/goplan9/plan9/client"
 "testing"
-
-
-/*11:*/
-
-
-//line goacme.w:184
-
-"fmt"
-
-
-
-/*:11*/
-
 
 
 /*12:*/
 
 
-//line goacme.w:190
+//line goacme.w:197
 
+"fmt"
 "time"
 
 
@@ -42,7 +32,7 @@ import(
 /*17:*/
 
 
-//line goacme.w:240
+//line goacme.w:247
 
 "bytes"
 "errors"
@@ -52,40 +42,26 @@ import(
 /*:17*/
 
 
-//line goacme.w:104
+//line goacme.w:106
 
 )
 
 func prepare(t*testing.T){
-// checking for a running plumber instance
-f,err:=os.Open(AcmeDir+"/index")
+_,err:=client.MountService("acme")
 if err==nil{
-f.Close()
 t.Log("acme started already")
 }else{
-cmd:=exec.Command("acme","-m",AcmeDir)
+cmd:=exec.Command("acme")
 err= cmd.Start()
 if err!=nil{
 t.Fatal(err)
 }
-}
-}
-
-
-
-/*14:*/
-
-
-//line goacme.w:198
-
-func TestNewOpen(t*testing.T){
-prepare(t)
 
 
 /*13:*/
 
 
-//line goacme.w:194
+//line goacme.w:202
 
 time.Sleep(time.Second)
 
@@ -94,15 +70,27 @@ time.Sleep(time.Second)
 /*:13*/
 
 
-//line goacme.w:201
+//line goacme.w:119
 
+}
+}
+
+
+
+/*14:*/
+
+
+//line goacme.w:206
+
+func TestNewOpen(t*testing.T){
+prepare(t)
 w,err:=New()
 if err!=nil{
 t.Fatal(err)
 }
 defer w.Close()
 defer w.Del(true)
-if f,err:=os.Open(fmt.Sprintf("%s/%d",AcmeDir,w.id));err!=nil{
+if f,err:=fsys.Open(fmt.Sprintf("%d",w.id),plan9.OREAD);err!=nil{
 t.Fatal(err)
 }else{
 f.Close()
@@ -118,25 +106,9 @@ f.Close()
 /*18:*/
 
 
-//line goacme.w:245
+//line goacme.w:252
 
 func TestReadWrite(t*testing.T){
-
-
-/*13:*/
-
-
-//line goacme.w:194
-
-time.Sleep(time.Second)
-
-
-
-/*:13*/
-
-
-//line goacme.w:247
-
 w,err:=New()
 if err!=nil{
 t.Fatal(err)
@@ -173,25 +145,9 @@ t.Fatal(errors.New("buffers don't match"))
 /*27:*/
 
 
-//line goacme.w:356
+//line goacme.w:366
 
 func TestPipeTo(t*testing.T){
-
-
-/*13:*/
-
-
-//line goacme.w:194
-
-time.Sleep(time.Second)
-
-
-
-/*:13*/
-
-
-//line goacme.w:358
-
 w,err:=New()
 if err!=nil{
 t.Fatal(err)
@@ -205,6 +161,22 @@ t.Fatal(err)
 }
 p.Wait()
 p.Release()
+
+
+/*13:*/
+
+
+//line goacme.w:202
+
+time.Sleep(time.Second)
+
+
+
+/*:13*/
+
+
+//line goacme.w:381
+
 w1,err:=Open(w.id)
 if err!=nil{
 t.Fatal(err)
@@ -230,25 +202,9 @@ t.Fatal(errors.New(fmt.Sprintf("buffers don't match: %q and %q",s,string(b))))
 /*29:*/
 
 
-//line goacme.w:416
+//line goacme.w:426
 
 func TestPipeFrom(t*testing.T){
-
-
-/*13:*/
-
-
-//line goacme.w:194
-
-time.Sleep(time.Second)
-
-
-
-/*:13*/
-
-
-//line goacme.w:418
-
 w,err:=New()
 if err!=nil{
 t.Fatal(err)
@@ -265,32 +221,20 @@ if err!=nil{
 t.Fatal(err)
 }
 defer f.Close()
-
-
-/*13:*/
-
-
-//line goacme.w:194
-
-time.Sleep(time.Second)
-
-
-
-/*:13*/
-
-
-//line goacme.w:435
-
 p,err:=w.PipeFrom("body",f,"cat")
 if err!=nil{
 t.Fatal(err)
 }
+w.Del(true)
+w.Close()
+p.Wait()
+p.Release()
 
 
 /*13:*/
 
 
-//line goacme.w:194
+//line goacme.w:202
 
 time.Sleep(time.Second)
 
@@ -299,12 +243,8 @@ time.Sleep(time.Second)
 /*:13*/
 
 
-//line goacme.w:440
+//line goacme.w:452
 
-w.Del(true)
-w.Close()
-p.Wait()
-p.Release()
 if _,err:=f.Seek(0,0);err!=nil{
 t.Fatal(err)
 }
@@ -327,25 +267,9 @@ t.Fatal(errors.New(fmt.Sprintf("buffers don't match: %q and %q",s,string(b))))
 /*31:*/
 
 
-//line goacme.w:486
+//line goacme.w:494
 
 func TestSysRun(t*testing.T){
-
-
-/*13:*/
-
-
-//line goacme.w:194
-
-time.Sleep(time.Second)
-
-
-
-/*:13*/
-
-
-//line goacme.w:488
-
 s:="test"
 f,p,err:=SysRun("echo","-n",s)
 if err!=nil{
@@ -358,7 +282,7 @@ p.Release()
 /*13:*/
 
 
-//line goacme.w:194
+//line goacme.w:202
 
 time.Sleep(time.Second)
 
@@ -367,7 +291,7 @@ time.Sleep(time.Second)
 /*:13*/
 
 
-//line goacme.w:496
+//line goacme.w:503
 
 b:=make([]byte,10)
 if _,err:=f.Seek(0,0);err!=nil{
@@ -392,63 +316,15 @@ t.Fatal(errors.New(fmt.Sprintf("buffers don't match: %q and %q",s,string(b))))
 /*33:*/
 
 
-//line goacme.w:528
+//line goacme.w:535
 
 func TestDel(t*testing.T){
-
-
-/*13:*/
-
-
-//line goacme.w:194
-
-time.Sleep(time.Second)
-
-
-
-/*:13*/
-
-
-//line goacme.w:530
-
 w,err:=New()
 if err!=nil{
 t.Fatal(err)
 }
-
-
-/*13:*/
-
-
-//line goacme.w:194
-
-time.Sleep(time.Second)
-
-
-
-/*:13*/
-
-
-//line goacme.w:535
-
 w.Del(true)
 w.Close()
-
-
-/*13:*/
-
-
-//line goacme.w:194
-
-time.Sleep(time.Second)
-
-
-
-/*:13*/
-
-
-//line goacme.w:538
-
 if _,err:=Open(w.id);err==nil{
 t.Fatal(errors.New(fmt.Sprintf("window %d is still opened",w.id)))
 }
@@ -464,43 +340,11 @@ t.Fatal(errors.New(fmt.Sprintf("window %d is still opened",w.id)))
 /*40:*/
 
 
-//line goacme.w:597
+//line goacme.w:601
 
 func TestDeleteAll(t*testing.T){
-
-
-/*13:*/
-
-
-//line goacme.w:194
-
-time.Sleep(time.Second)
-
-
-
-/*:13*/
-
-
-//line goacme.w:599
-
 var l[10]int
 for i:=0;i<len(l);i++{
-
-
-/*13:*/
-
-
-//line goacme.w:194
-
-time.Sleep(time.Second)
-
-
-
-/*:13*/
-
-
-//line goacme.w:602
-
 w,err:=New()
 if err!=nil{
 t.Fatal(err)
@@ -508,22 +352,6 @@ t.Fatal(err)
 l[i]= w.id
 }
 DeleteAll()
-
-
-/*13:*/
-
-
-//line goacme.w:194
-
-time.Sleep(time.Second)
-
-
-
-/*:13*/
-
-
-//line goacme.w:610
-
 for _,v:=range l{
 _,err:=Open(v)
 if err==nil{
@@ -541,25 +369,9 @@ t.Fatal(errors.New(fmt.Sprintf("window %d is still opened",v)))
 /*65:*/
 
 
-//line goacme.w:901
+//line goacme.w:902
 
 func TestEvent(t*testing.T){
-
-
-/*13:*/
-
-
-//line goacme.w:194
-
-time.Sleep(time.Second)
-
-
-
-/*:13*/
-
-
-//line goacme.w:903
-
 w,err:=New()
 if err!=nil{
 t.Fatal(err)
@@ -612,7 +424,7 @@ t.Fatal(err)
 /*:65*/
 
 
-//line goacme.w:122
+//line goacme.w:123
 
 
 

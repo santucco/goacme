@@ -1,11 +1,11 @@
-% This file is part of goacme package version 0.1
+% This file is part of goacme package version 0.2
 % Author Alexander Sychev
 
-\def\title{goacme (version 0.1)}
+\def\title{goacme (version 0.2)}
 \def\topofcontents{\null\vfill
 	\centerline{\titlefont The {\ttitlefont goacme} package for manipulating {\ttitlefont plumb} messages}
 	\vskip 15pt
-	\centerline{(version 0.1)}
+	\centerline{(version 0.2)}
 	\vfill}
 \def\botofcontents{\vfill
 \noindent
@@ -43,7 +43,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \let\maybe=\iftrue
 
 @** Introduction.
-It is a package to manupulate windows of \.{acme} 
+It is a package to manupulate windows of \.{Acme} 
 
 @** The package \.{goacme}.
 @c
@@ -92,7 +92,7 @@ var (
 @<Constants@>@#
 
 
-@ Let's describe a begin of a test for the package. The \.{acme} will be be started for the test.
+@ Let's describe a begin of a test for the package. The \.{Acme} will be be started for the test.
 
 @(goacme_test.go@>=
 package goacme
@@ -100,22 +100,23 @@ package goacme
 import (
 	"os"
 	"os/exec"
+	"code.google.com/p/goplan9/plan9"
+	"code.google.com/p/goplan9/plan9/client"
 	"testing"
 	@<Test specific imports@>
 )@#
 
-func prepare(t *testing.T) {
-	// checking for a running plumber instance
-	f,err:=os.Open(AcmeDir+"/index")
+func prepare(t *testing.T)  {
+	_,err:=client.MountService("acme")
 	if err==nil {
-		f.Close()
 		t.Log("acme started already")
 	} else {
-		cmd:=exec.Command("acme", "-m", AcmeDir)
+		cmd:=exec.Command("acme")
 		err=cmd.Start()
 		if err!=nil {
 			t.Fatal(err)
 		}
+		@<Sleep a bit@>	
 	}
 }
 
@@ -130,22 +131,35 @@ Window struct {
 	@<|Window| struct members@>
 }
 
-@ @<Variables@>=
-// |AcmeDir| is a default mount point of acme.
-AcmeDir string = "/mnt/acme"
-
 @* New.
 
 @
 @<Imports@>=
-"os"
+"code.google.com/p/goplan9/plan9"
+"code.google.com/p/goplan9/plan9/client"
+"sync"
 "fmt"
+
+@ At first we have to mount \.{Acme} namespace
+@<Variables@>=
+fsys	*client.Fsys
+
+@
+@<Mount \.{Acme} namespace@>=
+{
+	var err error
+	new(sync.Once).Do(func(){fsys,err=client.MountService("acme")})
+	if err!=nil {
+		return nil, err
+	}
+}
 
 @ 
 @c
 // |New| creates a new window and returns |*Window| or |error|
 func New() (*Window, error) {
-	f,err:=os.Open(AcmeDir+"/new/ctl")
+	@<Mount \.{Acme} namespace@>
+	f,err:=fsys.Open("new/ctl",plan9.OREAD)
 	if err!=nil {
 		return nil, err
 	}
@@ -161,11 +175,10 @@ func New() (*Window, error) {
 @c
 // |Open| opens a window with a specified |id| and returns |*Window| or |error|
 func Open(id int) (*Window, error) {
-	f,err:=os.Open(fmt.Sprintf("%s/%d", AcmeDir, id))
-	if err!=nil {
+	@<Mount \.{Acme} namespace@>
+	if err:=fsys.Access(fmt.Sprintf("%d", id), plan9.OREAD); err!=nil {
 		return nil, err
 	}
-	f.Close()
 	this:=&Window{id: id}
 	@<Init of |Window| members@>
 	return this, nil
@@ -183,11 +196,6 @@ func (this *Window) Close() error {
 
 @<Test specific imports@>=
 "fmt"
-
-@ It seems using of FUSE breaks transactional model file i/o from Plan9,
-so sometimes we should sleep a bit in tests to get \.{Acme} a possibility 
-to synchronize its internal state.
-@<Test specific imports@>=
 "time"
 
 @	
@@ -198,14 +206,13 @@ time.Sleep(time.Second)
 @<Test routines@>=
 func TestNewOpen(t *testing.T) {
 	prepare(t)
-	@<Sleep a bit@>	
 	w,err:=New()
 	if err!=nil {
 		t.Fatal(err)
 	}
 	defer w.Close()
 	defer w.Del(true)
-	if f,err:=os.Open(fmt.Sprintf("%s/%d", AcmeDir, w.id)); err!=nil {
+	if f,err:=fsys.Open(fmt.Sprintf("%d", w.id), plan9.OREAD); err!=nil {
 		t.Fatal(err)
 	} else {
 		f.Close()
@@ -244,7 +251,6 @@ func (this *Window) Write(p []byte) (int, error) {
 @
 @<Test routines@>=
 func TestReadWrite(t *testing.T) {
-	@<Sleep a bit@>
 	w,err:=New()
 	if err!=nil {
 		t.Fatal(err)
@@ -294,11 +300,11 @@ func (this *Window) Seek(offset int64, whence int) (ret int64, err error) {
 
 @ I have decided to store open files in |map[string]*os.File|.
 @<|Window| struct members@>=
-files map[string]*os.File
+files map[string] *client.Fid
 
 @
 @<Init of |Window| members@>=
-this.files=make(map[string]*os.File)
+this.files=make(map[string] *client.Fid)
 
 @ When |Window| is destroyed, all members of |files| have to be closed.
 @<Releasing of |Window| members@>=
@@ -315,7 +321,7 @@ func (this *Window) File(file string) (io.ReadWriteSeeker, error) {
 	if f!=nil {
 		return f, nil
 	}
-	f,err:=os.OpenFile(fmt.Sprintf("%s/%d/%s", AcmeDir, this.id, file), os.O_RDWR, 0600)	
+	f,err:=fsys.Open(fmt.Sprintf("%d/%s", this.id, file), plan9.ORDWR)	
 	if err!=nil {
 		return nil, err
 	}
@@ -326,6 +332,7 @@ func (this *Window) File(file string) (io.ReadWriteSeeker, error) {
 @* PipeTo. 
 
 @<Imports@>=
+"os"
 "os/exec"
 
 @
@@ -340,6 +347,9 @@ func (this *Window) PipeTo(name string, stderr io.Writer, cmd ...string) (*os.Pr
 		return nil, os.ErrInvalid
 	}
 	c:=exec.Command(cmd[0], cmd[1:]...)
+	if stderr==nil {
+		stderr=os.Stderr
+	}
 	c.Stdin=nil
 	c.Stderr=stderr
 	var err error
@@ -355,7 +365,6 @@ func (this *Window) PipeTo(name string, stderr io.Writer, cmd ...string) (*os.Pr
 @ Test of |PipeTo| function.
 @<Test routines@>=
 func TestPipeTo(t *testing.T) {
-	@<Sleep a bit@>
 	w,err:=New()
 	if err!=nil {
 		t.Fatal(err)
@@ -369,6 +378,7 @@ func TestPipeTo(t *testing.T) {
 	}
 	p.Wait()
 	p.Release()
+	@<Sleep a bit@>
 	w1,err:=Open(w.id)
 	if err!=nil {
 		t.Fatal(err)
@@ -415,7 +425,6 @@ func (this *Window) PipeFrom(name string, stdout io.Writer, cmd ...string) (*os.
 @ Test of |PipeFrom| function.
 @<Test routines@>=
 func TestPipeFrom(t *testing.T) {
-	@<Sleep a bit@>
 	w,err:=New()
 	if err!=nil {
 		t.Fatal(err)
@@ -432,16 +441,15 @@ func TestPipeFrom(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer f.Close()
-	@<Sleep a bit@>
 	p,err:=w.PipeFrom("body", f, "cat")
 	if err!=nil {
 		t.Fatal(err)
 	}
-	@<Sleep a bit@>
 	w.Del(true)
 	w.Close()
 	p.Wait()
 	p.Release()
+	@<Sleep a bit@>
 	if _,err:=f.Seek(0,0); err!=nil {
 		t.Fatal(err)
 	}
@@ -485,7 +493,6 @@ func SysRun(cmd ...string) (io.ReadSeeker, *os.Process, error) {
 @ Test of |SysRun| function.
 @<Test routines@>=
 func TestSysRun(t *testing.T) {
-	@<Sleep a bit@>
 	s:="test"
 	f,p,err:=SysRun("echo", "-n", s)
 	if err!=nil {
@@ -527,15 +534,12 @@ func (this *Window) Del(sure bool) error {
 @ Test of |Del| function.
 @<Test routines@>=
 func TestDel(t *testing.T) {
-	@<Sleep a bit@>
 	w,err:=New()
 	if err!=nil {
 		t.Fatal(err)
 	}
-	@<Sleep a bit@>
 	w.Del(true)
 	w.Close()
-	@<Sleep a bit@>
 	if _,err:=Open(w.id); err==nil {
 		t.Fatal(errors.New(fmt.Sprintf("window %d is still opened", w.id)))
 	}
@@ -596,10 +600,8 @@ func DeleteAll() {
 @ Test of |DeleteAll| function.
 @<Test routines@>=
 func TestDeleteAll(t *testing.T) {
-	@<Sleep a bit@>
 	var l [10]int
 	for i:=0;i<len(l);i++ {
-		@<Sleep a bit@>
 		w,err:=New()
 		if err!=nil {
 			t.Fatal(err)
@@ -607,7 +609,6 @@ func TestDeleteAll(t *testing.T) {
 		l[i]=w.id
 	}
 	DeleteAll()
-	@<Sleep a bit@>
 	for _,v:=range l {
 		_,err:=Open(v)
 		if err==nil {
@@ -900,7 +901,6 @@ func (this *Window) UnreadEvent(ev *Event) error {
 @ Tests for events
 @<Test routines@>=
 func TestEvent(t *testing.T) {
-	@<Sleep a bit@>	
 	w,err:=New()
 	if err!=nil {
 		t.Fatal(err)
