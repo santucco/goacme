@@ -715,14 +715,12 @@ ActionType	int
 @ Here described variants of |ActionType|
 @<Constants@>=
 const (
-	DeletedFromBody	ActionType = 1 << iota
-	DeletedFromTag
-	InsertInBody
-	InsertInTag
-	LookInBody
-	LookInTag
-	ExecuteInBody
-	ExecuteInTag
+	//|Tag| is a flag points out event has occured in tag of window
+	Tag		ActionType = 1
+	Delete 	ActionType = 2<< iota
+	Insert
+	Look
+	Execute
 )
 
 @
@@ -738,14 +736,14 @@ ErrInvalidType=errors.New("invalid type of action")
 @
 @<Interpret action@>=
 switch t {
-	case 'D': ev.Type=DeletedFromBody
-	case 'd': ev.Type=DeletedFromTag
-	case 'I': ev.Type=InsertInBody
-	case 'i': ev.Type=InsertInTag
-	case 'L': ev.Type=LookInBody
-	case 'l': ev.Type=LookInTag
-	case 'X': ev.Type=ExecuteInBody
-	case 'x': ev.Type=ExecuteInTag
+	case 'D': ev.Type=Delete
+	case 'd': ev.Type=Delete|Tag
+	case 'I': ev.Type=Insert
+	case 'i': ev.Type=Insert|Tag
+	case 'L': ev.Type=Look
+	case 'l': ev.Type=Look|Tag
+	case 'X': ev.Type=Execute
+	case 'x': ev.Type=Execute|Tag
 	default: return nil, ErrInvalidType
 }
 
@@ -787,9 +785,9 @@ Arg			string
 @<Interpret flag@>=
 ev.flag=f
 
-if ev.Type==ExecuteInBody || ev.Type==ExecuteInTag {
+if ev.Type&Execute==Execute {
 	ev.IsBuiltin=(ev.flag&1)==1
-} else if ev.Type==LookInBody || ev.Type==LookInTag {
+} else if ev.Type&Look==Look {
 	ev.NoLoad=(ev.flag&1)==1
 	ev.IsFile=(ev.flag&4)==4
 }
@@ -883,14 +881,14 @@ func (this *Window) UnreadEvent(ev *Event) error {
 	}
 	var t rune
 	switch ev.Type {
-		case DeletedFromBody : t='D'
-		case DeletedFromTag: t='d'
-		case InsertInBody: t='I'
-		case InsertInTag: t='i'
-		case LookInBody: t='L'
-		case LookInTag: t='l'
-		case ExecuteInBody: t='X'
-		case ExecuteInTag: t='x'
+		case Delete : t='D'
+		case Delete&Tag: t='d'
+		case Insert: t='I'
+		case Insert|Tag: t='i'
+		case Look: t='L'
+		case Look|Tag: t='l'
+		case Execute: t='X'
+		case Execute|Tag: t='x'
 		default: return ErrInvalidType
 	}
 	
@@ -926,7 +924,7 @@ func TestEvent(t *testing.T) {
 	if !ok {
 		t.Fatal(errors.New("Channel is closed"))
 	}
-	if e.Origin!=Mouse || e.Type!=LookInBody || e.Begin!=len(msg) || e.End!=len(msg)+len(test) || e.Text!=test {
+	if e.Origin!=Mouse || e.Type!=Look || e.Begin!=len(msg) || e.End!=len(msg)+len(test) || e.Text!=test {
 		t.Fatal(errors.New(fmt.Sprintf("Something wrong with event: %#v",e)))
 	}
 	if _,err:=w.Write([]byte("\nPress middle button of mouse on Del in the window's tag")); err!=nil {
@@ -940,7 +938,7 @@ func TestEvent(t *testing.T) {
 	if !ok {
 		t.Fatal(errors.New("Channel is closed"))
 	}
-	if e.Origin!=Mouse || e.Type!=ExecuteInTag || e.Text!="Del" {
+	if e.Origin!=Mouse || e.Type!=(Execute|Tag) || e.Text!="Del" {
 		t.Fatal(errors.New(fmt.Sprintf("Something wrong with event: %#v",e)))
 	}
 	if err:=w.UnreadEvent(e); err!=nil {
