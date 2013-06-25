@@ -369,7 +369,7 @@ t.Fatal(errors.New(fmt.Sprintf("window %d is still opened",v)))
 /*65:*/
 
 
-//line goacme.w:902
+//line goacme.w:900
 
 func TestEvent(t*testing.T){
 w,err:=New()
@@ -397,7 +397,7 @@ break
 if!ok{
 t.Fatal(errors.New("Channel is closed"))
 }
-if e.Origin!=Mouse||e.Type!=LookInBody||e.Begin!=len(msg)||e.End!=len(msg)+len(test)||e.Text!=test{
+if e.Origin!=Mouse||e.Type!=Look||e.Begin!=len(msg)||e.End!=len(msg)+len(test)||e.Text!=test{
 t.Fatal(errors.New(fmt.Sprintf("Something wrong with event: %#v",e)))
 }
 if _,err:=w.Write([]byte("\nPress middle button of mouse on Del in the window's tag"));err!=nil{
@@ -411,7 +411,7 @@ break
 if!ok{
 t.Fatal(errors.New("Channel is closed"))
 }
-if e.Origin!=Mouse||e.Type!=ExecuteInTag||e.Text!="Del"{
+if e.Origin!=Mouse||e.Type!=(Execute|Tag)||e.Text!="Del"{
 t.Fatal(errors.New(fmt.Sprintf("Something wrong with event: %#v",e)))
 }
 if err:=w.UnreadEvent(e);err!=nil{

@@ -140,7 +140,7 @@ next*Window
 /*60:*/
 
 
-//line goacme.w:819
+//line goacme.w:817
 
 ch chan*Event
 
@@ -184,7 +184,7 @@ Origin ActionOrigin
 /*53:*/
 
 
-//line goacme.w:729
+//line goacme.w:727
 
 // Type will be an type of action with type ActionType
 Type ActionType
@@ -198,7 +198,7 @@ Type ActionType
 /*56:*/
 
 
-//line goacme.w:756
+//line goacme.w:754
 
 begin int
 // Begin is a start address of a text of the action
@@ -216,7 +216,7 @@ End int
 /*58:*/
 
 
-//line goacme.w:773
+//line goacme.w:771
 
 flag int
 // IsBuiltin is a flag the action is recognised like a \.{Acme}'s builtin
@@ -323,7 +323,7 @@ ErrInvalidOrigin= errors.New("invalid origin of action")
 /*54:*/
 
 
-//line goacme.w:734
+//line goacme.w:732
 
 // ErrInvalidType will be returned if Type is unexpected 
 ErrInvalidType= errors.New("invalid type of action")
@@ -337,7 +337,7 @@ ErrInvalidType= errors.New("invalid type of action")
 /*62:*/
 
 
-//line goacme.w:847
+//line goacme.w:845
 
 // ErrChannelAlreadyOpened will be returned 
 // if channel of events is opened by call of EventChannel 
@@ -382,14 +382,12 @@ Mouse
 //line goacme.w:716
 
 const(
-DeletedFromBody ActionType= 1<<iota
-DeletedFromTag
-InsertInBody
-InsertInTag
-LookInBody
-LookInTag
-ExecuteInBody
-ExecuteInTag
+//Tag is a flag points out event has occured in tag of window
+Tag ActionType= 1
+Delete ActionType= 2<<iota
+Insert
+Look
+Execute
 )
 
 
@@ -906,17 +904,17 @@ default:return nil,ErrInvalidOrigin
 /*55:*/
 
 
-//line goacme.w:739
+//line goacme.w:737
 
 switch t{
-case'D':ev.Type= DeletedFromBody
-case'd':ev.Type= DeletedFromTag
-case'I':ev.Type= InsertInBody
-case'i':ev.Type= InsertInTag
-case'L':ev.Type= LookInBody
-case'l':ev.Type= LookInTag
-case'X':ev.Type= ExecuteInBody
-case'x':ev.Type= ExecuteInTag
+case'D':ev.Type= Delete
+case'd':ev.Type= Delete|Tag
+case'I':ev.Type= Insert
+case'i':ev.Type= Insert|Tag
+case'L':ev.Type= Look
+case'l':ev.Type= Look|Tag
+case'X':ev.Type= Execute
+case'x':ev.Type= Execute|Tag
 default:return nil,ErrInvalidType
 }
 
@@ -932,7 +930,7 @@ default:return nil,ErrInvalidType
 /*57:*/
 
 
-//line goacme.w:765
+//line goacme.w:763
 
 ev.begin= b
 ev.Begin= b
@@ -951,13 +949,13 @@ ev.End= e
 /*59:*/
 
 
-//line goacme.w:787
+//line goacme.w:785
 
 ev.flag= f
 
-if ev.Type==ExecuteInBody||ev.Type==ExecuteInTag{
+if ev.Type&Execute==Execute{
 ev.IsBuiltin= (ev.flag&1)==1
-}else if ev.Type==LookInBody||ev.Type==LookInTag{
+}else if ev.Type&Look==Look{
 ev.NoLoad= (ev.flag&1)==1
 ev.IsFile= (ev.flag&4)==4
 }
@@ -1002,7 +1000,7 @@ return&ev,nil
 /*61:*/
 
 
-//line goacme.w:823
+//line goacme.w:821
 
 // EventChannel returns a channel of *Event from which events can be read or error.
 // First call of EventChannel starts a goroutine to read events from "event" file 
@@ -1035,7 +1033,7 @@ return this.ch,nil
 /*63:*/
 
 
-//line goacme.w:853
+//line goacme.w:851
 
 //  reads an event from "event" file of the window and returns *Event or error
 func(this*Window)ReadEvent()(*Event,error){
@@ -1059,7 +1057,7 @@ return readEvent(f)
 /*64:*/
 
 
-//line goacme.w:868
+//line goacme.w:866
 
 // UnreadEvent writes event ev back to the "event" file, 
 // indicating to acme that it should be handled internally.
@@ -1078,14 +1076,14 @@ default:return ErrInvalidOrigin
 }
 var t rune
 switch ev.Type{
-case DeletedFromBody:t= 'D'
-case DeletedFromTag:t= 'd'
-case InsertInBody:t= 'I'
-case InsertInTag:t= 'i'
-case LookInBody:t= 'L'
-case LookInTag:t= 'l'
-case ExecuteInBody:t= 'X'
-case ExecuteInTag:t= 'x'
+case Delete:t= 'D'
+case Delete&Tag:t= 'd'
+case Insert:t= 'I'
+case Insert|Tag:t= 'i'
+case Look:t= 'L'
+case Look|Tag:t= 'l'
+case Execute:t= 'X'
+case Execute|Tag:t= 'x'
 default:return ErrInvalidType
 }
 
