@@ -1,11 +1,11 @@
-% This file is part of goacme package version 0.2
+% This file is part of goacme package version 0.3
 % Author Alexander Sychev
 
-\def\title{goacme (version 0.2)}
+\def\title{goacme (version 0.3)}
 \def\topofcontents{\null\vfill
 	\centerline{\titlefont The {\ttitlefont goacme} package for manipulating {\ttitlefont plumb} messages}
 	\vskip 15pt
-	\centerline{(version 0.2)}
+	\centerline{(version 0.3)}
 	\vfill}
 \def\botofcontents{\vfill
 \noindent
@@ -45,7 +45,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @** Introduction.
 It is a package to manupulate windows of \.{Acme} 
 
-@** The package \.{goacme}.
+@ Legal information.
 @c
 // Copyright (c) 2013 Alexander Sychev. All rights reserved.
 //
@@ -73,8 +73,10 @@ It is a package to manupulate windows of \.{Acme}
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-@#
-// Package goacme provides interface to acme programming environment
+
+@** Implementation.
+@c
+// Package |goacme| provides interface to |acme| programming environment
 package goacme
 
 import (
@@ -92,7 +94,7 @@ var (
 @<Constants@>@#
 
 
-@ Let's describe a begin of a test for the package. The \.{Acme} will be be started for the test.
+@ Let's describe a begin of a test for the package. The \.{Acme} will be started for the test.
 
 @(goacme_test.go@>=
 package goacme
@@ -100,7 +102,6 @@ package goacme
 import (
 	"os"
 	"os/exec"
-	"code.google.com/p/goplan9/plan9"
 	"code.google.com/p/goplan9/plan9/client"
 	"testing"
 	@<Test specific imports@>
@@ -125,7 +126,7 @@ func prepare(t *testing.T)  {
 @ Let's describe |Window| structure. All the fields are unexported. 
 For now |Window| contains |id| of a window, but the structure will be extended.
 @<Types@>=
-// |Window| is a structure to manipulate a particular acme's window.
+// |Window| is a structure to manipulate a particular |acme|'s window.
 Window struct {
 	id		int
 	@<|Window| struct members@>
@@ -171,7 +172,7 @@ func New() (*Window, error) {
 	return Open(id)
 }
 
-@* Open. |Open| opens a window with specified |id| and returns |*Window| or |error|
+@* Open.
 @c
 // |Open| opens a window with a specified |id| and returns |*Window| or |error|
 func Open(id int) (*Window, error) {
@@ -197,6 +198,8 @@ func (this *Window) Close() error {
 @<Test specific imports@>=
 "fmt"
 "time"
+"code.google.com/p/goplan9/plan9"
+
 
 @	
 @<Sleep a bit@>=
@@ -221,8 +224,8 @@ func TestNewOpen(t *testing.T) {
 
 @* Read.
 @c
-// |Read| reads |len(p)| bytes from |"body"| of the window. 
-// It returns count of readed bytes or |error|.
+// |Read| reads |len(p)| bytes from |"body"| file of the window. 
+// |Read| returns a count of read bytes or |error|.
 func (this *Window) Read(p []byte) (int, error) {
 	f,err:=this.File("body")
 	if err!=nil {
@@ -233,8 +236,8 @@ func (this *Window) Read(p []byte) (int, error) {
 
 @* Write.
 @c
-// |Write| writes |len(p)| bytes to |"body"| of the window.
-// It returns count of writen bytes or |error|.
+// |Write| writes |len(p)| bytes to |"body"| file of the window.
+// |Write| returns a count of written bytes or |error|.
 func (this *Window) Write(p []byte) (int, error) {
 	f,err:=this.File("body")
 	if err!=nil {
@@ -280,10 +283,10 @@ func TestReadWrite(t *testing.T) {
 
 @* Seek.
 @c
-// Seek sets the offset for the next Read or Write to offset, interpreted
+// |Seek| sets a position for the next Read or Write to |offset|, interpreted
 // according to whence: 0 means relative to the origin of the file, 1 means
-// relative to the current offset, and 2 means relative to the end. Seek
-// returns the new offset and an Error, if any.
+// relative to the current offset, and 2 means relative to the end. 
+// |Seek| returns the new offset or |error|
 func (this *Window) Seek(offset int64, whence int) (ret int64, err error) {
 	f,err:=this.File("body")
 	if err!=nil {
@@ -314,8 +317,7 @@ for _,v:=range this.files {
 
 @
 @c
-// |File| returns |io.ReadWriteSeeker| of corresponding |file| of the windows or error if |file| doesn't exist.
-// Opened file will be cached inside the window, so caller shouldn't close it.
+// |File| returns |io.ReadWriteSeeker| of corresponding |file| of the windows or |error|
 func (this *Window) File(file string) (io.ReadWriteSeeker, error) {
 	f:=this.files[file]
 	if f!=nil {
@@ -514,7 +516,6 @@ func TestSysRun(t *testing.T) {
 	}		
 }
 
-
 @* Del.
 @c
 // |Del| deletes the window, without a prompt if |sure| is true.
@@ -546,7 +547,8 @@ func TestDel(t *testing.T) {
 }
 
 
-@* DeleteAll. |DeleteAll| deletes all windows opened in a session. So all the windows should be stored
+@* DeleteAll.
+|DeleteAll| deletes all windows opened in a session. So all the windows should be stored
 in a list. Some global variables and |Window| members are needed for this purpose.
 
 @ |fwin| is a pointer to a first |Window| and |lwin| is a pointer to a last |Window|
@@ -694,7 +696,7 @@ Origin ActionOrigin
 
 @ 
 @<Variables@>=
-// |ErrInvalidOrigin| will be returned if |Origin| is unexptected 
+// |ErrInvalidOrigin| will be returned if a case of an unexpected origin of action
 ErrInvalidOrigin=errors.New("invalid origin of action")
 
 @
@@ -715,12 +717,14 @@ ActionType	int
 @ Here described variants of |ActionType|
 @<Constants@>=
 const (
-	//|Tag| is a flag points out event has occured in tag of window
-	Tag		ActionType = 1
-	Delete 	ActionType = 2<< iota
+	Delete 	ActionType = 1<< iota
 	Insert
 	Look
 	Execute
+	// |Tag| is a flag points out the event has occured in the tag of the window
+	Tag		 
+	// |TagMask| is a mask points out the event should be masked by tag
+	TagMask
 )
 
 @
@@ -730,7 +734,7 @@ Type ActionType
 
 @
 @<Variables@>=
-// |ErrInvalidType| will be returned if |Type| is unexpected 
+// |ErrInvalidType| will be returned if a case of an unexpected type of action
 ErrInvalidType=errors.New("invalid type of action")
 
 @
@@ -794,7 +798,7 @@ if ev.Type&Execute==Execute {
 
 ev.Text=s
 
-// if there is an expantion
+// if there is an expansion
 if (ev.flag&2)==2 {
 	_, _, ev.Begin, ev.End, _, ev.Text, err=readFields(r)
 	if err!=nil {
@@ -819,10 +823,13 @@ ch	chan *Event
 
 @
 @c
-// |EventChannel| returns a channel of |*Event| from which events can be read or |error|.
+// |EventChannel| returns a channel of |*Event| with a buffer |size| 
+// from which events can be read or |error|.
+// Only |ActionOrigin|s set in |omask| and |ActionType|s set in |tmask| are used.
+// If |TagMask| is set in |tmask|, the event will be masked by tag. Otherwise |Tag| flag will be ignored.
 // First call of |EventChannel| starts a goroutine to read events from |"event"| file 
 // and put them to the channel. Subsequent calls of |EventChannel| will return the same channel.
-func (this *Window) EventChannel() (<-chan *Event, error) {
+func (this *Window) EventChannel(size int, omask ActionOrigin, tmask ActionType) (<-chan *Event, error) {
 	if this.ch!=nil {
 		return this.ch, nil
 	}
@@ -830,9 +837,18 @@ func (this *Window) EventChannel() (<-chan *Event, error) {
 	if err!=nil	{
 		return nil, err
 	}
-	this.ch=make(chan *Event)
+	if tmask&TagMask!=TagMask {
+		tmask|=Tag
+	}
+	this.ch=make(chan *Event, size)
 	go func() {
 		for ev, err:=readEvent(f); err==nil; ev, err=readEvent(f) {
+			if ev.Origin&omask!=ev.Origin || ev.Type&tmask!=ev.Type {
+				if ev.flag&1==1 {
+					this.UnreadEvent(ev)
+				}
+				continue
+			}
 			this.ch<-ev
 		}
 		close(this.ch)
@@ -910,31 +926,34 @@ func TestEvent(t *testing.T) {
 	if _,err:=w.Write([]byte(msg+test)); err!=nil {
 		t.Fatal(err)
 	}
-	ch,err:=w.EventChannel() 
+	ch,err:=w.EventChannel(0,Mouse,Look|Execute) 
 	if err!=nil {
 		t.Fatal(err)
 	}
-	ok:=false
-	var e *Event
-	for e, ok=<-ch; ok; e,ok=<-ch {
-		if e.Origin==Mouse {
-			break
-		}
-	}
+	e, ok:=<-ch
 	if !ok {
 		t.Fatal(errors.New("Channel is closed"))
 	}
 	if e.Origin!=Mouse || e.Type!=Look || e.Begin!=len(msg) || e.End!=len(msg)+len(test) || e.Text!=test {
 		t.Fatal(errors.New(fmt.Sprintf("Something wrong with event: %#v",e)))
 	}
+	if _,err:=w.Write([]byte("\nChording test: select argument, press middle button of mouse on Execute and press left button of mouse without releasing middle button")); err!=nil {
+		t.Fatal(err)
+	}
+	e, ok=<-ch
+	if !ok {
+		t.Fatal(errors.New("Channel is closed"))
+	}
+	if e.Origin!=Mouse || e.Type!=(Execute) || e.Text!="Execute" || e.Arg!="argument" {
+		t.Fatal(errors.New(fmt.Sprintf("Something wrong with event: %#v",e)))
+	}
+	if err:=w.UnreadEvent(e); err!=nil {
+		t.Fatal(err)
+	}
 	if _,err:=w.Write([]byte("\nPress middle button of mouse on Del in the window's tag")); err!=nil {
 		t.Fatal(err)
 	}
-	for e, ok=<-ch; ok; e,ok=<-ch {
-		if e.Origin==Mouse {
-			break
-		}
-	}
+	e, ok=<-ch
 	if !ok {
 		t.Fatal(errors.New("Channel is closed"))
 	}
