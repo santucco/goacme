@@ -1,48 +1,49 @@
 
 
-/*3:*/
+/*4:*/
 
 
-//line goacme.w:97
+//line goacme.w:99
 
 package goacme
 
 import(
 "os"
 "os/exec"
-"code.google.com/p/goplan9/plan9"
 "code.google.com/p/goplan9/plan9/client"
 "testing"
 
 
-/*12:*/
+/*13:*/
 
 
-//line goacme.w:197
+//line goacme.w:198
 
 "fmt"
 "time"
+"code.google.com/p/goplan9/plan9"
 
 
 
-/*:12*/
+
+/*:13*/
 
 
 
-/*17:*/
+/*18:*/
 
 
-//line goacme.w:247
+//line goacme.w:250
 
 "bytes"
 "errors"
 
 
 
-/*:17*/
+/*:18*/
 
 
-//line goacme.w:106
+//line goacme.w:107
 
 )
 
@@ -58,29 +59,29 @@ t.Fatal(err)
 }
 
 
-/*13:*/
+/*14:*/
 
 
-//line goacme.w:202
+//line goacme.w:205
 
 time.Sleep(time.Second)
 
 
 
-/*:13*/
+/*:14*/
 
 
-//line goacme.w:119
+//line goacme.w:120
 
 }
 }
 
 
 
-/*14:*/
+/*15:*/
 
 
-//line goacme.w:206
+//line goacme.w:209
 
 func TestNewOpen(t*testing.T){
 prepare(t)
@@ -99,14 +100,14 @@ f.Close()
 
 
 
-/*:14*/
+/*:15*/
 
 
 
-/*18:*/
+/*19:*/
 
 
-//line goacme.w:252
+//line goacme.w:255
 
 func TestReadWrite(t*testing.T){
 w,err:=New()
@@ -138,14 +139,14 @@ t.Fatal(errors.New("buffers don't match"))
 
 
 
-/*:18*/
+/*:19*/
 
 
 
-/*27:*/
+/*28:*/
 
 
-//line goacme.w:366
+//line goacme.w:368
 
 func TestPipeTo(t*testing.T){
 w,err:=New()
@@ -163,19 +164,19 @@ p.Wait()
 p.Release()
 
 
-/*13:*/
+/*14:*/
 
 
-//line goacme.w:202
+//line goacme.w:205
 
 time.Sleep(time.Second)
 
 
 
-/*:13*/
+/*:14*/
 
 
-//line goacme.w:381
+//line goacme.w:383
 
 w1,err:=Open(w.id)
 if err!=nil{
@@ -195,14 +196,14 @@ t.Fatal(errors.New(fmt.Sprintf("buffers don't match: %q and %q",s,string(b))))
 
 
 
-/*:27*/
+/*:28*/
 
 
 
-/*29:*/
+/*30:*/
 
 
-//line goacme.w:426
+//line goacme.w:428
 
 func TestPipeFrom(t*testing.T){
 w,err:=New()
@@ -231,19 +232,19 @@ p.Wait()
 p.Release()
 
 
-/*13:*/
+/*14:*/
 
 
-//line goacme.w:202
+//line goacme.w:205
 
 time.Sleep(time.Second)
 
 
 
-/*:13*/
+/*:14*/
 
 
-//line goacme.w:452
+//line goacme.w:454
 
 if _,err:=f.Seek(0,0);err!=nil{
 t.Fatal(err)
@@ -260,14 +261,14 @@ t.Fatal(errors.New(fmt.Sprintf("buffers don't match: %q and %q",s,string(b))))
 
 
 
-/*:29*/
+/*:30*/
 
 
 
-/*31:*/
+/*32:*/
 
 
-//line goacme.w:494
+//line goacme.w:496
 
 func TestSysRun(t*testing.T){
 s:="test"
@@ -279,19 +280,19 @@ p.Wait()
 p.Release()
 
 
-/*13:*/
+/*14:*/
 
 
-//line goacme.w:202
+//line goacme.w:205
 
 time.Sleep(time.Second)
 
 
 
-/*:13*/
+/*:14*/
 
 
-//line goacme.w:503
+//line goacme.w:505
 
 b:=make([]byte,10)
 if _,err:=f.Seek(0,0);err!=nil{
@@ -308,15 +309,14 @@ t.Fatal(errors.New(fmt.Sprintf("buffers don't match: %q and %q",s,string(b))))
 
 
 
-
-/*:31*/
-
+/*:32*/
 
 
-/*33:*/
+
+/*34:*/
 
 
-//line goacme.w:535
+//line goacme.w:536
 
 func TestDel(t*testing.T){
 w,err:=New()
@@ -333,14 +333,14 @@ t.Fatal(errors.New(fmt.Sprintf("window %d is still opened",w.id)))
 
 
 
-/*:33*/
+/*:34*/
 
 
 
-/*40:*/
+/*41:*/
 
 
-//line goacme.w:601
+//line goacme.w:603
 
 func TestDeleteAll(t*testing.T){
 var l[10]int
@@ -362,14 +362,14 @@ t.Fatal(errors.New(fmt.Sprintf("window %d is still opened",v)))
 
 
 
-/*:40*/
+/*:41*/
 
 
 
-/*65:*/
+/*66:*/
 
 
-//line goacme.w:900
+//line goacme.w:916
 
 func TestEvent(t*testing.T){
 w,err:=New()
@@ -383,31 +383,34 @@ test:="Test"
 if _,err:=w.Write([]byte(msg+test));err!=nil{
 t.Fatal(err)
 }
-ch,err:=w.EventChannel()
+ch,err:=w.EventChannel(0,Mouse,Look|Execute)
 if err!=nil{
 t.Fatal(err)
 }
-ok:=false
-var e*Event
-for e,ok= <-ch;ok;e,ok= <-ch{
-if e.Origin==Mouse{
-break
-}
-}
+e,ok:=<-ch
 if!ok{
 t.Fatal(errors.New("Channel is closed"))
 }
 if e.Origin!=Mouse||e.Type!=Look||e.Begin!=len(msg)||e.End!=len(msg)+len(test)||e.Text!=test{
 t.Fatal(errors.New(fmt.Sprintf("Something wrong with event: %#v",e)))
 }
+if _,err:=w.Write([]byte("\nChording test: select argument, press middle button of mouse on Execute and press left button of mouse without releasing middle button"));err!=nil{
+t.Fatal(err)
+}
+e,ok= <-ch
+if!ok{
+t.Fatal(errors.New("Channel is closed"))
+}
+if e.Origin!=Mouse||e.Type!=(Execute)||e.Text!="Execute"||e.Arg!="argument"{
+t.Fatal(errors.New(fmt.Sprintf("Something wrong with event: %#v",e)))
+}
+if err:=w.UnreadEvent(e);err!=nil{
+t.Fatal(err)
+}
 if _,err:=w.Write([]byte("\nPress middle button of mouse on Del in the window's tag"));err!=nil{
 t.Fatal(err)
 }
-for e,ok= <-ch;ok;e,ok= <-ch{
-if e.Origin==Mouse{
-break
-}
-}
+e,ok= <-ch
 if!ok{
 t.Fatal(errors.New("Channel is closed"))
 }
@@ -421,14 +424,14 @@ t.Fatal(err)
 
 
 
-/*:65*/
+/*:66*/
 
 
-//line goacme.w:123
+//line goacme.w:124
 
 
 
 
-/*:3*/
+/*:4*/
 
 
