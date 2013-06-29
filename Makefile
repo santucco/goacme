@@ -1,4 +1,4 @@
-# This file is part of goacme package version 0.4
+# This file is part of goacme package version 0.5
 # Author Alexander Sychev
 #
 # Copyright (c) 2013 Alexander Sychev. All rights reserved.

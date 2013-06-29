@@ -467,7 +467,7 @@ t.Fatal(errors.New(fmt.Sprintf("Something wrong with address: %v, %v",b,e)))
 /*72:*/
 
 
-//line goacme.w:1071
+//line goacme.w:1075
 
 func TestWriteReadCtl(t*testing.T){
 w,err:=New()

@@ -1133,7 +1133,7 @@ if err!=nil{
 return err
 }
 if len(args)> 0{
-format= fmt.Sprintf(format,args)
+format= fmt.Sprintf(format,args...)
 }
 _,err= f.Write([]byte(format))
 return err
@@ -1176,13 +1176,17 @@ return
 //line goacme.w:1027
 
 // WriteCtl writes format with args in "ctl" file of the window
+// In case format is not ended by newline, '\n' will be added to the end of format
 func(this*Window)WriteCtl(format string,args...interface{})error{
 f,err:=this.File("ctl")
 if err!=nil{
 return err
 }
 if len(args)> 0{
-format= fmt.Sprintf(format,args)
+format= fmt.Sprintf(format,args...)
+}
+if len(format)>=0&&format[len(format)-1]!='\n'{
+format+= "\n"
 }
 _,err= f.Write([]byte(format))
 return err
@@ -1198,7 +1202,7 @@ return err
 /*71:*/
 
 
-//line goacme.w:1043
+//line goacme.w:1047
 
 // ReadCtl reads the address of the next read/write operation from "ctl" file of the window.
 // ReadCtl returns:

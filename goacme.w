@@ -1,11 +1,11 @@
-% This file is part of goacme package version 0.4
+% This file is part of goacme package version 0.5
 % Author Alexander Sychev
 
-\def\title{goacme (version 0.4)}
+\def\title{goacme (version 0.5)}
 \def\topofcontents{\null\vfill
 	\centerline{\titlefont The {\ttitlefont goacme} package for manipulating {\ttitlefont plumb} messages}
 	\vskip 15pt
-	\centerline{(version 0.4)}
+	\centerline{(version 0.5)}
 	\vfill}
 \def\botofcontents{\vfill
 \noindent
@@ -974,7 +974,7 @@ func (this *Window) WriteAddr(format string, args ...interface{}) error {
 		return err
 	}
 	if len(args)>0 {
-		format=fmt.Sprintf(format,args)
+		format=fmt.Sprintf(format,args...)
 	}
 	_,err=f.Write([]byte(format))
 	return err
@@ -1026,13 +1026,17 @@ func TestWriteReadAddr(t *testing.T) {
 @* WriteCtl.
 @c
 // |WriteCtl| writes |format| with |args| in |"ctl"| file of the window
+// In case |format| is not ended by newline, |'\n'| will be added to the end of |format|
 func (this *Window) WriteCtl(format string, args ...interface{}) error {
 	f,err:=this.File("ctl")
 	if err!=nil{
 		return err
 	}
 	if len(args)>0 {
-		format=fmt.Sprintf(format,args)
+		format=fmt.Sprintf(format,args...)
+	}
+	if len(format)>=0 && format[len(format)-1]!='\n' {
+		format+="\n"
 	}
 	_,err=f.Write([]byte(format))
 	return err
