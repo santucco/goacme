@@ -1,11 +1,11 @@
-% This file is part of goacme package version 0.3
+% This file is part of goacme package version 0.4
 % Author Alexander Sychev
 
-\def\title{goacme (version 0.3)}
+\def\title{goacme (version 0.4)}
 \def\topofcontents{\null\vfill
 	\centerline{\titlefont The {\ttitlefont goacme} package for manipulating {\ttitlefont plumb} messages}
 	\vskip 15pt
-	\centerline{(version 0.3)}
+	\centerline{(version 0.4)}
 	\vfill}
 \def\botofcontents{\vfill
 \noindent
@@ -14,14 +14,14 @@ Copyright \copyright\ 2013 Alexander Sychev. All rights reserved.
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-\yskip\item{$\bullet$}Redistributions of source code must retain the 
+\yskip\item{$\bullet$}Redistributions of source code must retain the
 above copyright
 notice, this list of conditions and the following disclaimer.
 \yskip\item{$\bullet$}Redistributions in binary form must reproduce the above
 copyright notice, this list of conditions and the following disclaimer
 in the documentation and/or other materials provided with the
 distribution.
-\yskip\item{$\bullet$}The name of author may not be used to endorse 
+\yskip\item{$\bullet$}The name of author may not be used to endorse
 or promote products derived from
 this software without specific prior written permission.
 
@@ -43,7 +43,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \let\maybe=\iftrue
 
 @** Introduction.
-It is a package to manupulate windows of \.{Acme} 
+It is a package to manupulate windows of \.{Acme}
 
 @ Legal information.
 @c
@@ -117,13 +117,13 @@ func prepare(t *testing.T)  {
 		if err!=nil {
 			t.Fatal(err)
 		}
-		@<Sleep a bit@>	
+		@<Sleep a bit@>
 	}
 }
 
 @<Test routines@>
 
-@ Let's describe |Window| structure. All the fields are unexported. 
+@ Let's describe |Window| structure. All the fields are unexported.
 For now |Window| contains |id| of a window, but the structure will be extended.
 @<Types@>=
 // |Window| is a structure to manipulate a particular |acme|'s window.
@@ -155,7 +155,7 @@ fsys	*client.Fsys
 	}
 }
 
-@ 
+@
 @c
 // |New| creates a new window and returns |*Window| or |error|
 func New() (*Window, error) {
@@ -201,7 +201,7 @@ func (this *Window) Close() error {
 "code.google.com/p/goplan9/plan9"
 
 
-@	
+@
 @<Sleep a bit@>=
 time.Sleep(time.Second)
 
@@ -224,7 +224,7 @@ func TestNewOpen(t *testing.T) {
 
 @* Read.
 @c
-// |Read| reads |len(p)| bytes from |"body"| file of the window. 
+// |Read| reads |len(p)| bytes from |"body"| file of the window.
 // |Read| returns a count of read bytes or |error|.
 func (this *Window) Read(p []byte) (int, error) {
 	f,err:=this.File("body")
@@ -285,7 +285,7 @@ func TestReadWrite(t *testing.T) {
 @c
 // |Seek| sets a position for the next Read or Write to |offset|, interpreted
 // according to whence: 0 means relative to the origin of the file, 1 means
-// relative to the current offset, and 2 means relative to the end. 
+// relative to the current offset, and 2 means relative to the end.
 // |Seek| returns the new offset or |error|
 func (this *Window) Seek(offset int64, whence int) (ret int64, err error) {
 	f,err:=this.File("body")
@@ -323,7 +323,7 @@ func (this *Window) File(file string) (io.ReadWriteSeeker, error) {
 	if f!=nil {
 		return f, nil
 	}
-	f,err:=fsys.Open(fmt.Sprintf("%d/%s", this.id, file), plan9.ORDWR)	
+	f,err:=fsys.Open(fmt.Sprintf("%d/%s", this.id, file), plan9.ORDWR)
 	if err!=nil {
 		return nil, err
 	}
@@ -331,7 +331,7 @@ func (this *Window) File(file string) (io.ReadWriteSeeker, error) {
 	return f, nil
 }
 
-@* PipeTo. 
+@* PipeTo.
 
 @<Imports@>=
 "os"
@@ -339,7 +339,7 @@ func (this *Window) File(file string) (io.ReadWriteSeeker, error) {
 
 @
 @c
-// |PipeTo| runs shell command line |cmd| with /dev/null on standard input and the window's file 
+// |PipeTo| runs shell command line |cmd| with /dev/null on standard input and the window's file
 // on standard output.  If |stderr| is non-zero, it is used as standard error.
 // Otherwise the command inherits the caller's standard error.
 // |PipeTo| returns |*os.Process| of created process or |error|.
@@ -361,7 +361,7 @@ func (this *Window) PipeTo(name string, stderr io.Writer, cmd ...string) (*os.Pr
 	if err:=c.Start(); err!=nil {
 		return nil, err
 	}
-	return c.Process, nil	
+	return c.Process, nil
 }
 
 @ Test of |PipeTo| function.
@@ -394,10 +394,10 @@ func TestPipeTo(t *testing.T) {
 	}
 	if bytes.Compare([]byte(s),b[:n])!=0 {
 		t.Fatal(errors.New(fmt.Sprintf("buffers don't match: %q and %q", s,string(b))))
-	}	
+	}
 }
 
-@* PipeFrom. 
+@* PipeFrom.
 @c
 // |PipeFrom| runs a shell command line |cmd| with the
 // window's file on standard input.  The command runs with
@@ -417,11 +417,11 @@ func (this *Window) PipeFrom(name string, stdout io.Writer, cmd ...string) (*os.
 	var err error
 	if c.Stdin,err=this.File(name); err!=nil {
 		return nil, err
-	} 
+	}
 	if err:=c.Start(); err!=nil {
 		return nil, err
 	}
-	return c.Process, nil	
+	return c.Process, nil
 }
 
 @ Test of |PipeFrom| function.
@@ -467,7 +467,7 @@ func TestPipeFrom(t *testing.T) {
 
 @* SysRun.
 @c
-// |SysRun| runs shell command |cmd| and returns |io.ReadSeeker| of a window, 
+// |SysRun| runs shell command |cmd| and returns |io.ReadSeeker| of a window,
 // |*os.Process| of a running process or |error|.
 // Caller has to wait the running process and read its exit status.
 func SysRun(cmd ...string) (io.ReadSeeker, *os.Process, error) {
@@ -513,7 +513,7 @@ func TestSysRun(t *testing.T) {
 	}
 	if bytes.Compare([]byte(s),b[:n])!=0 {
 		t.Fatal(errors.New(fmt.Sprintf("buffers don't match: %q and %q", s,string(b))))
-	}		
+	}
 }
 
 @* Del.
@@ -529,7 +529,7 @@ func (this *Window) Del(sure bool) error {
 		s="delete"
 	}
 	_,err=f.Write([]byte(s))
-	return err	
+	return err
 }
 
 @ Test of |Del| function.
@@ -628,8 +628,8 @@ Event struct {
 }
 
 @ |readEvent| reads properties of an event from |r|. Some trick is used here: |r| is supposed not buffered,
-so it doesn't implement |RuneScanner| interface. When a length of text is parsing in event, 
-a space followed by the length is read by |Fscanf| and we shouldn't read it. 
+so it doesn't implement |RuneScanner| interface. When a length of text is parsing in event,
+a space followed by the length is read by |Fscanf| and we shouldn't read it.
 @c
 func readFields(r io.Reader) (o rune, t rune, b int, e int, f int, s string, err error) {
 	var l int
@@ -652,7 +652,7 @@ func readFields(r io.Reader) (o rune, t rune, b int, e int, f int, s string, err
 	return
 }
 
-@ |readEvent| is unexported function to read |Event| from |f|. 
+@ |readEvent| is unexported function to read |Event| from |f|.
 @c
 func readEvent(r io.Reader) (*Event, error) {
 	o, t, b, e, f, s, err:=readFields(r)
@@ -664,7 +664,7 @@ func readEvent(r io.Reader) (*Event, error) {
 	@<Interpret action@>
 	@<Fill addresses@>
 	@<Interpret flag@>
-	return &ev, nil	
+	return &ev, nil
 }
 
 @ Let's make a type for origin of an action
@@ -680,12 +680,12 @@ const (
 	// |File| is the origin for through the window's other files
 	File
 	// |Keyboard| is the origin for keyboard actions
-	Keyboard	
+	Keyboard
 	// |Mouse| is the origin for mouse actions
 	Mouse
 )
 
-@ 
+@
 @<Fields of |Event|@>=
 // |Origin| will be an origin of action with type |ActionOrigin|
 Origin ActionOrigin
@@ -694,7 +694,7 @@ Origin ActionOrigin
 @<Imports@>=
 "errors"
 
-@ 
+@
 @<Variables@>=
 // |ErrInvalidOrigin| will be returned if a case of an unexpected origin of action
 ErrInvalidOrigin=errors.New("invalid origin of action")
@@ -706,7 +706,7 @@ switch o {
 	case 'F': ev.Origin=File
 	case 'K': ev.Origin=Keyboard
 	case 'M': ev.Origin=Mouse
-	default: return nil, ErrInvalidOrigin 
+	default: return nil, ErrInvalidOrigin
 }
 
 @ Let's make a type for type of an action
@@ -722,7 +722,7 @@ const (
 	Look
 	Execute
 	// |Tag| is a flag points out the event has occured in the tag of the window
-	Tag		 
+	Tag
 	// |TagMask| is a mask points out the event should be masked by tag
 	TagMask
 )
@@ -752,7 +752,7 @@ switch t {
 }
 
 @ |Begin| and |End| are addresses of the action.
-|begin| and |end| are unexported addresses from an original event - they should be stored, 
+|begin| and |end| are unexported addresses from an original event - they should be stored,
 but I decided to hide them to avoid collisions.
 
 @<Fields of |Event|@>=
@@ -814,20 +814,20 @@ if (ev.flag&8)==8 {
 	_, _, _, _, _, _, err=readFields(r)
 	if err!=nil {
 		return nil, err
-	}		
+	}
 }
 
-@*1 EventChannel. 
+@*1 EventChannel.
 @<|Window| struct members@>=
 ch	chan *Event
 
 @
 @c
-// |EventChannel| returns a channel of |*Event| with a buffer |size| 
+// |EventChannel| returns a channel of |*Event| with a buffer |size|
 // from which events can be read or |error|.
 // Only |ActionOrigin|s set in |omask| and |ActionType|s set in |tmask| are used.
 // If |TagMask| is set in |tmask|, the event will be masked by tag. Otherwise |Tag| flag will be ignored.
-// First call of |EventChannel| starts a goroutine to read events from |"event"| file 
+// First call of |EventChannel| starts a goroutine to read events from |"event"| file
 // and put them to the channel. Subsequent calls of |EventChannel| will return the same channel.
 func (this *Window) EventChannel(size int, omask ActionOrigin, tmask ActionType) (<-chan *Event, error) {
 	if this.ch!=nil {
@@ -859,8 +859,8 @@ func (this *Window) EventChannel(size int, omask ActionOrigin, tmask ActionType)
 
 @*1 ReadEvent.
 @<Variables@>=
-// |ErrChannelAlreadyOpened| will be returned 
-// if channel of events is opened by call of |EventChannel| 
+// |ErrChannelAlreadyOpened| will be returned
+// if channel of events is opened by call of |EventChannel|
 ErrChannelAlreadyOpened=errors.New("channel of events is already opened")
 
 @
@@ -880,7 +880,7 @@ func (this *Window) ReadEvent() (*Event, error) {
 
 @*1 UnreadEvent.
 @c
-// |UnreadEvent| writes event |ev| back to the |"event"| file, 
+// |UnreadEvent| writes event |ev| back to the |"event"| file,
 // indicating to acme that it should be handled internally.
 func (this *Window) UnreadEvent(ev *Event) error {
 	f,err:=this.File("event")
@@ -893,7 +893,7 @@ func (this *Window) UnreadEvent(ev *Event) error {
 		case File: o='F'
 		case Keyboard: o='K'
 		case Mouse: o='M'
-		default: return ErrInvalidOrigin 
+		default: return ErrInvalidOrigin
 	}
 	var t rune
 	switch ev.Type {
@@ -907,7 +907,7 @@ func (this *Window) UnreadEvent(ev *Event) error {
 		case Execute|Tag: t='x'
 		default: return ErrInvalidType
 	}
-	
+
 	_,err=fmt.Fprintf(f,"%c%c%d %d \n", o, t, ev.begin, ev.end)
 	return err
 }
@@ -921,12 +921,12 @@ func TestEvent(t *testing.T) {
 	}
 	defer w.Close()
 	defer w.Del(true)
-	msg:="Press left button of mouse on " 	
+	msg:="Press left button of mouse on "
 	test:="Test"
 	if _,err:=w.Write([]byte(msg+test)); err!=nil {
 		t.Fatal(err)
 	}
-	ch,err:=w.EventChannel(0,Mouse,Look|Execute) 
+	ch,err:=w.EventChannel(0,Mouse,Look|Execute)
 	if err!=nil {
 		t.Fatal(err)
 	}
@@ -964,5 +964,135 @@ func TestEvent(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+@* WriteAddr.
+@c
+// |WriteAddr| writes |format| with |args| in |"addr"| file of the window
+func (this *Window) WriteAddr(format string, args ...interface{}) error {
+	f,err:=this.File("addr")
+	if err!=nil{
+		return err
+	}
+	if len(args)>0 {
+		format=fmt.Sprintf(format,args)
+	}
+	_,err=f.Write([]byte(format))
+	return err
+}
+
+@* ReadAddr.
+@c
+// |ReadAddr| reads the address of the next read/write operation from |"addr"| file of the window.
+// |ReadAddr| return |begin| and |end| offsets in symbols or |error|
+func (this *Window) ReadAddr() (begin int, end int, err error) {
+	f,err:=this.File("addr")
+	if err!=nil{
+		return
+	}
+	if _,err=f.Seek(0,0); err!=nil {
+		return
+	}
+	_,err=fmt.Fscanf(f, "%d %d", &begin, &end)
+	return
+}
+
+@ Tests for operations with addresses
+@<Test routines@>=
+func TestWriteReadAddr(t *testing.T) {
+	w,err:=New()
+	if err!=nil {
+		t.Fatal(err)
+	}
+	defer w.Close()
+	defer w.Del(true)
+	if b,e,err:=w.ReadAddr(); err!=nil {
+		t.Fatal(err)
+	} else if b!=0 || e!=0 {
+		t.Fatal(errors.New(fmt.Sprintf("Something wrong with address: %v, %v", b, e)))
+	}
+	if _,err:=w.Write([]byte("test")); err!=nil {
+		t.Fatal(err)
+	}
+	if err:=w.WriteAddr("0,$"); err!=nil {
+		t.Fatal(err)
+	}
+	if b,e,err:=w.ReadAddr(); err!=nil {
+		t.Fatal(err)
+	} else if b!=0 || e!=4 {
+		t.Fatal(errors.New(fmt.Sprintf("Something wrong with address: %v, %v", b, e)))
+	}
+}
+
+@* WriteCtl.
+@c
+// |WriteCtl| writes |format| with |args| in |"ctl"| file of the window
+func (this *Window) WriteCtl(format string, args ...interface{}) error {
+	f,err:=this.File("ctl")
+	if err!=nil{
+		return err
+	}
+	if len(args)>0 {
+		format=fmt.Sprintf(format,args)
+	}
+	_,err=f.Write([]byte(format))
+	return err
+}
+
+
+@* ReadCtl.
+@c
+// |ReadCtl| reads the address of the next read/write operation from |"ctl"| file of the window.
+// |ReadCtl| returns:
+//    |id| - the window ID
+//    |tlen| - number of characters (runes) in the tag;
+//    |blen| - number of characters in the body;
+//    |isdir| -  |true| if the window is a directory, |false| otherwise;
+//    |isdirty| - |true| if the window is modified, |false|otherwise;
+//    |wwidth| - the width of the window in pixels;
+//    |font| - the name of the font used in the window;
+//    |twidth| - the width of a tab character in pixels;
+//    |error| - in case of any error.
+func (this *Window) ReadCtl() (id int, tlen int, blen int, isdir bool, isdirty bool, wwidth int, font string, twidth int, err error) {
+	f,err:=this.File("ctl")
+	if err!=nil{
+		return
+	}
+	if _,err=f.Seek(0,0); err!=nil {
+		return
+	}
+	var dir,dirty int
+	_,err=fmt.Fscanf(f, "%d %d %d %d %d %d %s %d", &id, &tlen, &blen, &dir, &dirty, &wwidth, &font, &twidth)
+	isdir=dir==1
+	isdirty=dirty==1
+	return
+}
+
+@ Tests for operations with |"ctl"| file
+@<Test routines@>=
+func TestWriteReadCtl(t *testing.T) {
+	w,err:=New()
+	if err!=nil {
+		t.Fatal(err)
+	}
+	defer w.Close()
+	defer w.Del(true)
+	if _,err:=w.Write([]byte("test")); err!=nil {
+		t.Fatal(err)
+	}
+	if _,_,_,_,d,_,_,_,err:=w.ReadCtl(); err!=nil {
+		t.Fatal(err)
+	} else if !d  {
+		t.Fatal(errors.New(fmt.Sprintf("The window has to be dirty\n")))
+	}
+	if err:=w.WriteCtl("clean"); err!=nil {
+		t.Fatal(err)
+	}
+	if _,_,_,_,d,_,_,_,err:=w.ReadCtl(); err!=nil {
+		t.Fatal(err)
+	} else if d  {
+		t.Fatal(errors.New(fmt.Sprintf("The window has to be clean\n")))
+	}
+}
+
 
 @** Index.

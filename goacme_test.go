@@ -427,6 +427,79 @@ t.Fatal(err)
 /*:66*/
 
 
+
+/*69:*/
+
+
+//line goacme.w:1000
+
+func TestWriteReadAddr(t*testing.T){
+w,err:=New()
+if err!=nil{
+t.Fatal(err)
+}
+defer w.Close()
+defer w.Del(true)
+if b,e,err:=w.ReadAddr();err!=nil{
+t.Fatal(err)
+}else if b!=0||e!=0{
+t.Fatal(errors.New(fmt.Sprintf("Something wrong with address: %v, %v",b,e)))
+}
+if _,err:=w.Write([]byte("test"));err!=nil{
+t.Fatal(err)
+}
+if err:=w.WriteAddr("0,$");err!=nil{
+t.Fatal(err)
+}
+if b,e,err:=w.ReadAddr();err!=nil{
+t.Fatal(err)
+}else if b!=0||e!=4{
+t.Fatal(errors.New(fmt.Sprintf("Something wrong with address: %v, %v",b,e)))
+}
+}
+
+
+
+/*:69*/
+
+
+
+/*72:*/
+
+
+//line goacme.w:1071
+
+func TestWriteReadCtl(t*testing.T){
+w,err:=New()
+if err!=nil{
+t.Fatal(err)
+}
+defer w.Close()
+defer w.Del(true)
+if _,err:=w.Write([]byte("test"));err!=nil{
+t.Fatal(err)
+}
+if _,_,_,_,d,_,_,_,err:=w.ReadCtl();err!=nil{
+t.Fatal(err)
+}else if!d{
+t.Fatal(errors.New(fmt.Sprintf("The window has to be dirty\n")))
+}
+if err:=w.WriteCtl("clean");err!=nil{
+t.Fatal(err)
+}
+if _,_,_,_,d,_,_,_,err:=w.ReadCtl();err!=nil{
+t.Fatal(err)
+}else if d{
+t.Fatal(errors.New(fmt.Sprintf("The window has to be clean\n")))
+}
+}
+
+
+
+
+/*:72*/
+
+
 //line goacme.w:124
 
 
