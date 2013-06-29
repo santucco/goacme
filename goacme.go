@@ -350,8 +350,8 @@ ErrInvalidType= errors.New("invalid type of action")
 
 //line goacme.w:861
 
-// ErrChannelAlreadyOpened will be returned 
-// if channel of events is opened by call of EventChannel 
+// ErrChannelAlreadyOpened will be returned
+// if channel of events is opened by call of EventChannel
 ErrChannelAlreadyOpened= errors.New("channel of events is already opened")
 
 
@@ -607,7 +607,7 @@ return nil
 
 //line goacme.w:226
 
-// Read reads len(p) bytes from "body" file of the window. 
+// Read reads len(p) bytes from "body" file of the window.
 // Read returns a count of read bytes or error.
 func(this*Window)Read(p[]byte)(int,error){
 f,err:=this.File("body")
@@ -651,7 +651,7 @@ return f.Write(p)
 
 // Seek sets a position for the next Read or Write to offset, interpreted
 // according to whence: 0 means relative to the origin of the file, 1 means
-// relative to the current offset, and 2 means relative to the end. 
+// relative to the current offset, and 2 means relative to the end.
 // Seek returns the new offset or error
 func(this*Window)Seek(offset int64,whence int)(ret int64,err error){
 f,err:=this.File("body")
@@ -699,7 +699,7 @@ return f,nil
 
 //line goacme.w:341
 
-// PipeTo runs shell command line cmd with /dev/null on standard input and the window's file 
+// PipeTo runs shell command line cmd with /dev/null on standard input and the window's file
 // on standard output.  If stderr is non-zero, it is used as standard error.
 // Otherwise the command inherits the caller's standard error.
 // PipeTo returns *os.Process of created process or error.
@@ -771,7 +771,7 @@ return c.Process,nil
 
 //line goacme.w:469
 
-// SysRun runs shell command cmd and returns io.ReadSeeker of a window, 
+// SysRun runs shell command cmd and returns io.ReadSeeker of a window,
 // *os.Process of a running process or error.
 // Caller has to wait the running process and read its exit status.
 func SysRun(cmd...string)(io.ReadSeeker,*os.Process,error){
@@ -1014,11 +1014,11 @@ return&ev,nil
 
 //line goacme.w:825
 
-// EventChannel returns a channel of *Event with a buffer size 
+// EventChannel returns a channel of *Event with a buffer size
 // from which events can be read or error.
 // Only ActionOrigins set in omask and ActionTypes set in tmask are used.
 // If TagMask is set in tmask, the event will be masked by tag. Otherwise Tag flag will be ignored.
-// First call of EventChannel starts a goroutine to read events from "event" file 
+// First call of EventChannel starts a goroutine to read events from "event" file
 // and put them to the channel. Subsequent calls of EventChannel will return the same channel.
 func(this*Window)EventChannel(size int,omask ActionOrigin,tmask ActionType)(<-chan*Event,error){
 if this.ch!=nil{
@@ -1083,7 +1083,7 @@ return readEvent(f)
 
 //line goacme.w:882
 
-// UnreadEvent writes event ev back to the "event" file, 
+// UnreadEvent writes event ev back to the "event" file,
 // indicating to acme that it should be handled internally.
 func(this*Window)UnreadEvent(ev*Event)error{
 f,err:=this.File("event")
@@ -1118,5 +1118,116 @@ return err
 
 
 /*:65*/
+
+
+
+/*67:*/
+
+
+//line goacme.w:969
+
+// WriteAddr writes format with args in "addr" file of the window
+func(this*Window)WriteAddr(format string,args...interface{})error{
+f,err:=this.File("addr")
+if err!=nil{
+return err
+}
+if len(args)> 0{
+format= fmt.Sprintf(format,args)
+}
+_,err= f.Write([]byte(format))
+return err
+}
+
+
+
+/*:67*/
+
+
+
+/*68:*/
+
+
+//line goacme.w:984
+
+// ReadAddr reads the address of the next read/write operation from "addr" file of the window.
+// ReadAddr return begin and end offsets in symbols or error
+func(this*Window)ReadAddr()(begin int,end int,err error){
+f,err:=this.File("addr")
+if err!=nil{
+return
+}
+if _,err= f.Seek(0,0);err!=nil{
+return
+}
+_,err= fmt.Fscanf(f,"%d %d",&begin,&end)
+return
+}
+
+
+
+/*:68*/
+
+
+
+/*70:*/
+
+
+//line goacme.w:1027
+
+// WriteCtl writes format with args in "ctl" file of the window
+func(this*Window)WriteCtl(format string,args...interface{})error{
+f,err:=this.File("ctl")
+if err!=nil{
+return err
+}
+if len(args)> 0{
+format= fmt.Sprintf(format,args)
+}
+_,err= f.Write([]byte(format))
+return err
+}
+
+
+
+
+/*:70*/
+
+
+
+/*71:*/
+
+
+//line goacme.w:1043
+
+// ReadCtl reads the address of the next read/write operation from "ctl" file of the window.
+// ReadCtl returns:
+//    id - the window ID
+//    tlen - number of characters (runes) in the tag;
+//    blen - number of characters in the body;
+//    isdir -  true if the window is a directory, false otherwise;
+//    isdirty - true if the window is modified, falseotherwise;
+//    wwidth - the width of the window in pixels;
+//    font - the name of the font used in the window;
+//    twidth - the width of a tab character in pixels;
+//    error - in case of any error.
+func(this*Window)ReadCtl()(id int,tlen int,blen int,isdir bool,isdirty bool,wwidth int,font string,twidth int,err error){
+f,err:=this.File("ctl")
+if err!=nil{
+return
+}
+if _,err= f.Seek(0,0);err!=nil{
+return
+}
+var dir,dirty int
+_,err= fmt.Fscanf(f,"%d %d %d %d %d %d %s %d",&id,&tlen,&blen,&dir,&dirty,&wwidth,&font,&twidth)
+isdir= dir==1
+isdirty= dirty==1
+return
+}
+
+
+
+/*:71*/
 
 
