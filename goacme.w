@@ -670,7 +670,7 @@ func readEvent(r io.Reader) (*Event, error) {
 // |ActionOrigin| is a origin of the action
 ActionOrigin	int
 
-@ Here described variants of |ActionOrigin|
+@ Here we describe variants of |ActionOrigin|
 @<Constants@>=
 const (
 	// |Edit| is the origin for writes to the body or tag file
@@ -712,7 +712,7 @@ switch o {
 // |ActionType| is a type of the action
 ActionType	int
 
-@ Here described variants of |ActionType|
+@ Here we describe variants of |ActionType|
 @<Constants@>=
 const (
 	Delete 	ActionType = 1<< iota
