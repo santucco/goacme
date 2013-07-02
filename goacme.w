@@ -133,8 +133,6 @@ Window struct {
 }
 
 @* New.
-
-@
 @<Imports@>=
 "code.google.com/p/goplan9/plan9"
 "code.google.com/p/goplan9/plan9/client"
@@ -627,7 +625,7 @@ Event struct {
 	@<Fields of |Event|@>
 }
 
-@ |readEvent| reads properties of an event from |r|. Some trick is used here: |r| is supposed not buffered,
+@ |readFields| reads properties of an event from |r|. Some trick is used here: |r| is supposed not buffered,
 so it doesn't implement |RuneScanner| interface. When a length of text is parsing in event,
 a space followed by the length is read by |Fscanf| and we shouldn't read it.
 @c
