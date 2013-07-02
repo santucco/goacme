@@ -14,10 +14,10 @@ import(
 "testing"
 
 
-/*13:*/
+/*12:*/
 
 
-//line goacme.w:198
+//line goacme.w:196
 
 "fmt"
 "time"
@@ -26,21 +26,21 @@ import(
 
 
 
-/*:13*/
+/*:12*/
 
 
 
-/*18:*/
+/*17:*/
 
 
-//line goacme.w:250
+//line goacme.w:248
 
 "bytes"
 "errors"
 
 
 
-/*:18*/
+/*:17*/
 
 
 //line goacme.w:107
@@ -59,16 +59,16 @@ t.Fatal(err)
 }
 
 
-/*14:*/
+/*13:*/
 
 
-//line goacme.w:205
+//line goacme.w:203
 
 time.Sleep(time.Second)
 
 
 
-/*:14*/
+/*:13*/
 
 
 //line goacme.w:120
@@ -78,10 +78,10 @@ time.Sleep(time.Second)
 
 
 
-/*15:*/
+/*14:*/
 
 
-//line goacme.w:209
+//line goacme.w:207
 
 func TestNewOpen(t*testing.T){
 prepare(t)
@@ -100,14 +100,14 @@ f.Close()
 
 
 
-/*:15*/
+/*:14*/
 
 
 
-/*19:*/
+/*18:*/
 
 
-//line goacme.w:255
+//line goacme.w:253
 
 func TestReadWrite(t*testing.T){
 w,err:=New()
@@ -139,14 +139,14 @@ t.Fatal(errors.New("buffers don't match"))
 
 
 
-/*:19*/
+/*:18*/
 
 
 
-/*28:*/
+/*27:*/
 
 
-//line goacme.w:368
+//line goacme.w:366
 
 func TestPipeTo(t*testing.T){
 w,err:=New()
@@ -164,19 +164,19 @@ p.Wait()
 p.Release()
 
 
-/*14:*/
+/*13:*/
 
 
-//line goacme.w:205
+//line goacme.w:203
 
 time.Sleep(time.Second)
 
 
 
-/*:14*/
+/*:13*/
 
 
-//line goacme.w:383
+//line goacme.w:381
 
 w1,err:=Open(w.id)
 if err!=nil{
@@ -196,14 +196,14 @@ t.Fatal(errors.New(fmt.Sprintf("buffers don't match: %q and %q",s,string(b))))
 
 
 
-/*:28*/
+/*:27*/
 
 
 
-/*30:*/
+/*29:*/
 
 
-//line goacme.w:428
+//line goacme.w:426
 
 func TestPipeFrom(t*testing.T){
 w,err:=New()
@@ -232,19 +232,19 @@ p.Wait()
 p.Release()
 
 
-/*14:*/
+/*13:*/
 
 
-//line goacme.w:205
+//line goacme.w:203
 
 time.Sleep(time.Second)
 
 
 
-/*:14*/
+/*:13*/
 
 
-//line goacme.w:454
+//line goacme.w:452
 
 if _,err:=f.Seek(0,0);err!=nil{
 t.Fatal(err)
@@ -261,14 +261,14 @@ t.Fatal(errors.New(fmt.Sprintf("buffers don't match: %q and %q",s,string(b))))
 
 
 
-/*:30*/
+/*:29*/
 
 
 
-/*32:*/
+/*31:*/
 
 
-//line goacme.w:496
+//line goacme.w:494
 
 func TestSysRun(t*testing.T){
 s:="test"
@@ -280,19 +280,19 @@ p.Wait()
 p.Release()
 
 
-/*14:*/
+/*13:*/
 
 
-//line goacme.w:205
+//line goacme.w:203
 
 time.Sleep(time.Second)
 
 
 
-/*:14*/
+/*:13*/
 
 
-//line goacme.w:505
+//line goacme.w:503
 
 b:=make([]byte,10)
 if _,err:=f.Seek(0,0);err!=nil{
@@ -309,14 +309,14 @@ t.Fatal(errors.New(fmt.Sprintf("buffers don't match: %q and %q",s,string(b))))
 
 
 
-/*:32*/
+/*:31*/
 
 
 
-/*34:*/
+/*33:*/
 
 
-//line goacme.w:536
+//line goacme.w:534
 
 func TestDel(t*testing.T){
 w,err:=New()
@@ -333,14 +333,14 @@ t.Fatal(errors.New(fmt.Sprintf("window %d is still opened",w.id)))
 
 
 
-/*:34*/
+/*:33*/
 
 
 
-/*41:*/
+/*40:*/
 
 
-//line goacme.w:603
+//line goacme.w:601
 
 func TestDeleteAll(t*testing.T){
 var l[10]int
@@ -362,14 +362,14 @@ t.Fatal(errors.New(fmt.Sprintf("window %d is still opened",v)))
 
 
 
-/*:41*/
+/*:40*/
 
 
 
-/*66:*/
+/*65:*/
 
 
-//line goacme.w:916
+//line goacme.w:914
 
 func TestEvent(t*testing.T){
 w,err:=New()
@@ -424,14 +424,14 @@ t.Fatal(err)
 
 
 
-/*:66*/
+/*:65*/
 
 
 
-/*69:*/
+/*68:*/
 
 
-//line goacme.w:1000
+//line goacme.w:998
 
 func TestWriteReadAddr(t*testing.T){
 w,err:=New()
@@ -460,14 +460,14 @@ t.Fatal(errors.New(fmt.Sprintf("Something wrong with address: %v, %v",b,e)))
 
 
 
-/*:69*/
+/*:68*/
 
 
 
-/*72:*/
+/*71:*/
 
 
-//line goacme.w:1075
+//line goacme.w:1073
 
 func TestWriteReadCtl(t*testing.T){
 w,err:=New()
@@ -497,7 +497,7 @@ t.Fatal(errors.New(fmt.Sprintf("The window has to be clean\n")))
 
 
 
-/*:72*/
+/*:71*/
 
 
 //line goacme.w:124
