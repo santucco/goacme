@@ -33,7 +33,7 @@ import(
 /*17:*/
 
 
-//line goacme.w:248
+//line goacme.w:249
 
 "bytes"
 "errors"
@@ -107,7 +107,7 @@ f.Close()
 /*18:*/
 
 
-//line goacme.w:253
+//line goacme.w:254
 
 func TestReadWrite(t*testing.T){
 w,err:=New()
@@ -146,7 +146,7 @@ t.Fatal(errors.New("buffers don't match"))
 /*27:*/
 
 
-//line goacme.w:366
+//line goacme.w:368
 
 func TestPipeTo(t*testing.T){
 w,err:=New()
@@ -176,7 +176,7 @@ time.Sleep(time.Second)
 /*:13*/
 
 
-//line goacme.w:381
+//line goacme.w:383
 
 w1,err:=Open(w.id)
 if err!=nil{
@@ -203,7 +203,7 @@ t.Fatal(errors.New(fmt.Sprintf("buffers don't match: %q and %q",s,string(b))))
 /*29:*/
 
 
-//line goacme.w:426
+//line goacme.w:428
 
 func TestPipeFrom(t*testing.T){
 w,err:=New()
@@ -244,7 +244,7 @@ time.Sleep(time.Second)
 /*:13*/
 
 
-//line goacme.w:452
+//line goacme.w:454
 
 if _,err:=f.Seek(0,0);err!=nil{
 t.Fatal(err)
@@ -268,7 +268,7 @@ t.Fatal(errors.New(fmt.Sprintf("buffers don't match: %q and %q",s,string(b))))
 /*31:*/
 
 
-//line goacme.w:494
+//line goacme.w:496
 
 func TestSysRun(t*testing.T){
 s:="test"
@@ -292,7 +292,7 @@ time.Sleep(time.Second)
 /*:13*/
 
 
-//line goacme.w:503
+//line goacme.w:505
 
 b:=make([]byte,10)
 if _,err:=f.Seek(0,0);err!=nil{
@@ -316,7 +316,7 @@ t.Fatal(errors.New(fmt.Sprintf("buffers don't match: %q and %q",s,string(b))))
 /*33:*/
 
 
-//line goacme.w:534
+//line goacme.w:536
 
 func TestDel(t*testing.T){
 w,err:=New()
@@ -340,7 +340,7 @@ t.Fatal(errors.New(fmt.Sprintf("window %d is still opened",w.id)))
 /*40:*/
 
 
-//line goacme.w:601
+//line goacme.w:603
 
 func TestDeleteAll(t*testing.T){
 var l[10]int
@@ -369,7 +369,7 @@ t.Fatal(errors.New(fmt.Sprintf("window %d is still opened",v)))
 /*65:*/
 
 
-//line goacme.w:914
+//line goacme.w:916
 
 func TestEvent(t*testing.T){
 w,err:=New()
@@ -431,7 +431,7 @@ t.Fatal(err)
 /*68:*/
 
 
-//line goacme.w:998
+//line goacme.w:1000
 
 func TestWriteReadAddr(t*testing.T){
 w,err:=New()
@@ -467,7 +467,7 @@ t.Fatal(errors.New(fmt.Sprintf("Something wrong with address: %v, %v",b,e)))
 /*71:*/
 
 
-//line goacme.w:1073
+//line goacme.w:1075
 
 func TestWriteReadCtl(t*testing.T){
 w,err:=New()
@@ -493,7 +493,6 @@ t.Fatal(err)
 t.Fatal(errors.New(fmt.Sprintf("The window has to be clean\n")))
 }
 }
-
 
 
 

@@ -1,11 +1,11 @@
-% This file is part of goacme package version 0.5
+% This file is part of goacme package version 0.6
 % Author Alexander Sychev
 
-\def\title{goacme (version 0.5)}
+\def\title{goacme (version 0.6)}
 \def\topofcontents{\null\vfill
 	\centerline{\titlefont The {\ttitlefont goacme} package for manipulating {\ttitlefont plumb} messages}
 	\vskip 15pt
-	\centerline{(version 0.5)}
+	\centerline{(version 0.6)}
 	\vfill}
 \def\botofcontents{\vfill
 \noindent
@@ -94,7 +94,7 @@ var (
 @<Constants@>@#
 
 
-@ Let's describe a begin of a test for the package. The \.{Acme} will be started for the test.
+@ Let's describe a begin of a test for the package. \.{Acme} will be started for the test.
 
 @(goacme_test.go@>=
 package goacme
@@ -241,6 +241,7 @@ func (this *Window) Write(p []byte) (int, error) {
 	if err!=nil {
 		return 0, err
 	}
+	@<Convert |f| to a wrapper@>
 	return f.Write(p)
 }
 
@@ -317,16 +318,17 @@ for _,v:=range this.files {
 @c
 // |File| returns |io.ReadWriteSeeker| of corresponding |file| of the windows or |error|
 func (this *Window) File(file string) (io.ReadWriteSeeker, error) {
-	f:=this.files[file]
-	if f!=nil {
-		return f, nil
+	fid, ok:=this.files[file]
+	if !ok {
+		var err error
+		if fid,err=fsys.Open(fmt.Sprintf("%d/%s", this.id, file), plan9.ORDWR); err!=nil {
+			return nil, err
+		}
+		this.files[file]=fid
 	}
-	f,err:=fsys.Open(fmt.Sprintf("%d/%s", this.id, file), plan9.ORDWR)
-	if err!=nil {
-		return nil, err
-	}
-	this.files[file]=f
-	return f, nil
+	var f io.ReadWriteSeeker = fid
+	@<Convert |f| to a wrapper@>
+	return f, nil	
 }
 
 @* PipeTo.
@@ -772,7 +774,7 @@ ev.End=e
 
 @<Fields of |Event|@>=
 flag		int
-// |IsBuiltin| is a flag the action is recognised like a \.{Acme}'s builtin
+// |IsBuiltin| is a flag the action is recognised like an \.{Acme}'s builtin
 IsBuiltin	bool
 // |NoLoad| is a flag of acme can interpret the action without loading a new file
 NoLoad		bool
@@ -1096,5 +1098,41 @@ func TestWriteReadCtl(t *testing.T) {
 	}
 }
 
+@ I found \.{Acme} panics when a size of message is more that 8168 bytes.
+So I decided to make a wrapper to replace |Write| method.
+@<Types@>=
+wrapper struct {
+	f io.ReadWriteSeeker
+}
+
+@ |wrapper| has to support |io.ReadWriteSeeker| interface, so here are the interface functions.
+@c
+func (this *wrapper) Read(p []byte) (int, error) {
+	return this.f.Read(p)
+}
+
+func (this *wrapper) Write(p []byte) (int, error) {
+	c:=0
+	for i:=0; i<len(p); i+=8168 {
+		n:=i+8168
+		if n>len(p) {
+			n=len(p)
+		}
+		n,e:=this.f.Write(p[i:n])
+		c+=n
+		if e!=nil {
+			return c,e
+		}
+	}
+	return c, nil
+}
+
+func (this *wrapper) Seek(offset int64, whence int) (ret int64, err error) {
+	return this.f.Seek(offset, whence)
+}
+
+@ This is a convertor to |wrapper|
+@<Convert |f| to a wrapper@>=
+f=&wrapper{f:f}
 
 @** Index.
