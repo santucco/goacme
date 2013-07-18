@@ -844,9 +844,7 @@ func (this *Window) EventChannel(size int, omask ActionOrigin, tmask ActionType)
 	go func() {
 		for ev, err:=readEvent(f); err==nil; ev, err=readEvent(f) {
 			if ev.Origin&omask!=ev.Origin || ev.Type&tmask!=ev.Type {
-				if ev.flag&1==1 {
-					this.UnreadEvent(ev)
-				}
+				this.UnreadEvent(ev)
 				continue
 			}
 			this.ch<-ev
@@ -898,7 +896,7 @@ func (this *Window) UnreadEvent(ev *Event) error {
 	var t rune
 	switch ev.Type {
 		case Delete : t='D'
-		case Delete&Tag: t='d'
+		case Delete|Tag: t='d'
 		case Insert: t='I'
 		case Insert|Tag: t='i'
 		case Look: t='L'
@@ -908,7 +906,7 @@ func (this *Window) UnreadEvent(ev *Event) error {
 		default: return ErrInvalidType
 	}
 
-	_,err=fmt.Fprintf(f,"%c%c%d %d \n", o, t, ev.begin, ev.end)
+	_,err=fmt.Fprintf(f,"%c%c%d %d\n", o, t, ev.begin, ev.end)
 	return err
 }
 
@@ -1112,6 +1110,9 @@ func (this *wrapper) Read(p []byte) (int, error) {
 }
 
 func (this *wrapper) Write(p []byte) (int, error) {
+	if len(p)<8168 {
+		return this.f.Write(p)
+	}
 	c:=0
 	for i:=0; i<len(p); i+=8168 {
 		n:=i+8168
