@@ -816,6 +816,22 @@ if (ev.flag&8)==8 {
 		return nil, err
 	}
 }
+@<Check if some arguments are in |Text| field@>
+
+@ If some arguments are in |Text|, then let's add them in the begin of |Arg|
+@<Imports@>=
+"strings"
+
+@
+@<Check if some arguments are in |Text| field@>=
+if len(ev.Text)>0 {
+	f:=strings.Fields(ev.Text)
+	if len(f)>1 {
+		ev.Arg=strings.Join(f[1:], " ")+" "+ev.Arg
+	}
+	ev.Text=f[0]
+}
+
 
 @*1 EventChannel.
 @<|Window| struct members@>=
@@ -1135,5 +1151,7 @@ func (this *wrapper) Seek(offset int64, whence int) (ret int64, err error) {
 @ This is a convertor to |wrapper|
 @<Convert |f| to a wrapper@>=
 f=&wrapper{f:f}
+
+
 
 @** Index.
