@@ -366,10 +366,10 @@ t.Fatal(errors.New(fmt.Sprintf("window %d is still opened",v)))
 
 
 
-/*65:*/
+/*67:*/
 
 
-//line goacme.w:914
+//line goacme.w:930
 
 func TestEvent(t*testing.T){
 w,err:=New()
@@ -424,14 +424,14 @@ t.Fatal(err)
 
 
 
-/*:65*/
+/*:67*/
 
 
 
-/*68:*/
+/*70:*/
 
 
-//line goacme.w:998
+//line goacme.w:1014
 
 func TestWriteReadAddr(t*testing.T){
 w,err:=New()
@@ -460,14 +460,14 @@ t.Fatal(errors.New(fmt.Sprintf("Something wrong with address: %v, %v",b,e)))
 
 
 
-/*:68*/
+/*:70*/
 
 
 
-/*71:*/
+/*73:*/
 
 
-//line goacme.w:1073
+//line goacme.w:1089
 
 func TestWriteReadCtl(t*testing.T){
 w,err:=New()
@@ -496,7 +496,7 @@ t.Fatal(errors.New(fmt.Sprintf("The window has to be clean\n")))
 
 
 
-/*:71*/
+/*:73*/
 
 
 //line goacme.w:124

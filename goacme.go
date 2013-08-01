@@ -104,6 +104,19 @@ import(
 /*:48*/
 
 
+
+/*60:*/
+
+
+//line goacme.w:822
+
+"strings"
+
+
+
+/*:60*/
+
+
 //line goacme.w:83
 
 )
@@ -148,16 +161,16 @@ next*Window
 
 
 
-/*60:*/
+/*62:*/
 
 
-//line goacme.w:821
+//line goacme.w:837
 
 ch chan*Event
 
 
 
-/*:60*/
+/*:62*/
 
 
 //line goacme.w:132
@@ -284,10 +297,10 @@ ActionType int
 
 
 
-/*72:*/
+/*74:*/
 
 
-//line goacme.w:1101
+//line goacme.w:1117
 
 wrapper struct{
 f io.ReadWriteSeeker
@@ -295,7 +308,7 @@ f io.ReadWriteSeeker
 
 
 
-/*:72*/
+/*:74*/
 
 
 //line goacme.w:87
@@ -360,10 +373,10 @@ ErrInvalidType= errors.New("invalid type of action")
 
 
 
-/*62:*/
+/*64:*/
 
 
-//line goacme.w:859
+//line goacme.w:875
 
 // ErrChannelAlreadyOpened will be returned
 // if channel of events is opened by call of EventChannel
@@ -371,7 +384,7 @@ ErrChannelAlreadyOpened= errors.New("channel of events is already opened")
 
 
 
-/*:62*/
+/*:64*/
 
 
 //line goacme.w:91
@@ -652,16 +665,18 @@ return 0,err
 }
 
 
-/*74:*/
+/*76:*/
 
 
-//line goacme.w:1136
+//line goacme.w:1152
 
 f= &wrapper{f:f}
 
 
 
-/*:74*/
+
+
+/*:76*/
 
 
 //line goacme.w:244
@@ -718,16 +733,18 @@ this.files[file]= fid
 var f io.ReadWriteSeeker= fid
 
 
-/*74:*/
+/*76:*/
 
 
-//line goacme.w:1136
+//line goacme.w:1152
 
 f= &wrapper{f:f}
 
 
 
-/*:74*/
+
+
+/*:76*/
 
 
 //line goacme.w:330
@@ -1041,6 +1058,29 @@ return nil,err
 }
 
 
+/*61:*/
+
+
+//line goacme.w:826
+
+if len(ev.Text)> 0{
+f:=strings.Fields(ev.Text)
+if len(f)> 1{
+ev.Arg= strings.Join(f[1:]," ")+" "+ev.Arg
+}
+ev.Text= f[0]
+}
+
+
+
+
+/*:61*/
+
+
+//line goacme.w:819
+
+
+
 
 /*:59*/
 
@@ -1056,10 +1096,10 @@ return&ev,nil
 
 
 
-/*61:*/
+/*63:*/
 
 
-//line goacme.w:825
+//line goacme.w:841
 
 // EventChannel returns a channel of *Event with a buffer size
 // from which events can be read or error.
@@ -1095,14 +1135,14 @@ return this.ch,nil
 
 
 
-/*:61*/
+/*:63*/
 
 
 
-/*63:*/
+/*65:*/
 
 
-//line goacme.w:865
+//line goacme.w:881
 
 //  reads an event from "event" file of the window and returns *Event or error
 func(this*Window)ReadEvent()(*Event,error){
@@ -1119,14 +1159,14 @@ return readEvent(f)
 
 
 
-/*:63*/
+/*:65*/
 
 
 
-/*64:*/
+/*66:*/
 
 
-//line goacme.w:880
+//line goacme.w:896
 
 // UnreadEvent writes event ev back to the "event" file,
 // indicating to acme that it should be handled internally.
@@ -1162,14 +1202,14 @@ return err
 
 
 
-/*:64*/
+/*:66*/
 
 
 
-/*66:*/
+/*68:*/
 
 
-//line goacme.w:967
+//line goacme.w:983
 
 // WriteAddr writes format with args in "addr" file of the window
 func(this*Window)WriteAddr(format string,args...interface{})error{
@@ -1186,14 +1226,14 @@ return err
 
 
 
-/*:66*/
+/*:68*/
 
 
 
-/*67:*/
+/*69:*/
 
 
-//line goacme.w:982
+//line goacme.w:998
 
 // ReadAddr reads the address of the next read/write operation from "addr" file of the window.
 // ReadAddr return begin and end offsets in symbols or error
@@ -1211,14 +1251,14 @@ return
 
 
 
-/*:67*/
+/*:69*/
 
 
 
-/*69:*/
+/*71:*/
 
 
-//line goacme.w:1025
+//line goacme.w:1041
 
 // WriteCtl writes format with args in "ctl" file of the window
 // In case format is not ended by newline, '\n' will be added to the end of format
@@ -1240,14 +1280,14 @@ return err
 
 
 
-/*:69*/
+/*:71*/
 
 
 
-/*70:*/
+/*72:*/
 
 
-//line goacme.w:1045
+//line goacme.w:1061
 
 // ReadCtl reads the address of the next read/write operation from "ctl" file of the window.
 // ReadCtl returns:
@@ -1277,14 +1317,14 @@ return
 
 
 
-/*:70*/
+/*:72*/
 
 
 
-/*73:*/
+/*75:*/
 
 
-//line goacme.w:1107
+//line goacme.w:1123
 
 func(this*wrapper)Read(p[]byte)(int,error){
 return this.f.Read(p)
@@ -1315,6 +1355,6 @@ return this.f.Seek(offset,whence)
 
 
 
-/*:73*/
+/*:75*/
 
 
