@@ -827,9 +827,13 @@ if (ev.flag&8)==8 {
 if len(ev.Text)>0 {
 	f:=strings.Fields(ev.Text)
 	if len(f)>1 {
-		ev.Arg=strings.Join(f[1:], " ")+" "+ev.Arg
+		ev.Text=f[0]
+		s:=ev.Arg
+		if len(s)>0 {
+			s=" "+ev.Arg
+		}
+		ev.Arg=strings.Join(f[1:], " ")+s
 	}
-	ev.Text=f[0]
 }
 
 
