@@ -369,7 +369,7 @@ t.Fatal(errors.New(fmt.Sprintf("window %d is still opened",v)))
 /*67:*/
 
 
-//line goacme.w:930
+//line goacme.w:934
 
 func TestEvent(t*testing.T){
 w,err:=New()
@@ -431,7 +431,7 @@ t.Fatal(err)
 /*70:*/
 
 
-//line goacme.w:1014
+//line goacme.w:1018
 
 func TestWriteReadAddr(t*testing.T){
 w,err:=New()
@@ -467,7 +467,7 @@ t.Fatal(errors.New(fmt.Sprintf("Something wrong with address: %v, %v",b,e)))
 /*73:*/
 
 
-//line goacme.w:1089
+//line goacme.w:1093
 
 func TestWriteReadCtl(t*testing.T){
 w,err:=New()
