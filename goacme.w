@@ -322,7 +322,11 @@ func (this *Window) File(file string) (io.ReadWriteSeeker, error) {
 	if !ok {
 		var err error
 		if fid,err=fsys.Open(fmt.Sprintf("%d/%s", this.id, file), plan9.ORDWR); err!=nil {
-			return nil, err
+			if fid,err=fsys.Open(fmt.Sprintf("%d/%s", this.id, file), plan9.OREAD); err!=nil {
+				if fid,err=fsys.Open(fmt.Sprintf("%d/%s", this.id, file), plan9.OWRITE); err!=nil {
+					return nil, err
+				}
+			}
 		}
 		this.files[file]=fid
 	}

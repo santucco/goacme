@@ -146,7 +146,7 @@ t.Fatal(errors.New("buffers don't match"))
 /*27:*/
 
 
-//line goacme.w:368
+//line goacme.w:372
 
 func TestPipeTo(t*testing.T){
 w,err:=New()
@@ -176,7 +176,7 @@ time.Sleep(time.Second)
 /*:13*/
 
 
-//line goacme.w:383
+//line goacme.w:387
 
 w1,err:=Open(w.id)
 if err!=nil{
@@ -203,7 +203,7 @@ t.Fatal(errors.New(fmt.Sprintf("buffers don't match: %q and %q",s,string(b))))
 /*29:*/
 
 
-//line goacme.w:428
+//line goacme.w:432
 
 func TestPipeFrom(t*testing.T){
 w,err:=New()
@@ -244,7 +244,7 @@ time.Sleep(time.Second)
 /*:13*/
 
 
-//line goacme.w:454
+//line goacme.w:458
 
 if _,err:=f.Seek(0,0);err!=nil{
 t.Fatal(err)
@@ -268,7 +268,7 @@ t.Fatal(errors.New(fmt.Sprintf("buffers don't match: %q and %q",s,string(b))))
 /*31:*/
 
 
-//line goacme.w:496
+//line goacme.w:500
 
 func TestSysRun(t*testing.T){
 s:="test"
@@ -292,7 +292,7 @@ time.Sleep(time.Second)
 /*:13*/
 
 
-//line goacme.w:505
+//line goacme.w:509
 
 b:=make([]byte,10)
 if _,err:=f.Seek(0,0);err!=nil{
@@ -316,7 +316,7 @@ t.Fatal(errors.New(fmt.Sprintf("buffers don't match: %q and %q",s,string(b))))
 /*33:*/
 
 
-//line goacme.w:536
+//line goacme.w:540
 
 func TestDel(t*testing.T){
 w,err:=New()
@@ -340,7 +340,7 @@ t.Fatal(errors.New(fmt.Sprintf("window %d is still opened",w.id)))
 /*40:*/
 
 
-//line goacme.w:603
+//line goacme.w:607
 
 func TestDeleteAll(t*testing.T){
 var l[10]int
@@ -369,7 +369,7 @@ t.Fatal(errors.New(fmt.Sprintf("window %d is still opened",v)))
 /*67:*/
 
 
-//line goacme.w:934
+//line goacme.w:938
 
 func TestEvent(t*testing.T){
 w,err:=New()
@@ -431,7 +431,7 @@ t.Fatal(err)
 /*70:*/
 
 
-//line goacme.w:1018
+//line goacme.w:1022
 
 func TestWriteReadAddr(t*testing.T){
 w,err:=New()
@@ -467,7 +467,7 @@ t.Fatal(errors.New(fmt.Sprintf("Something wrong with address: %v, %v",b,e)))
 /*73:*/
 
 
-//line goacme.w:1093
+//line goacme.w:1097
 
 func TestWriteReadCtl(t*testing.T){
 w,err:=New()
