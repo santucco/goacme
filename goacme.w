@@ -868,7 +868,9 @@ func (this *Window) EventChannel(size int, omask ActionOrigin, tmask ActionType)
 	go func() {
 		for ev, err:=readEvent(f); err==nil; ev, err=readEvent(f) {
 			if ev.Origin&omask!=ev.Origin || ev.Type&tmask!=ev.Type {
-				this.UnreadEvent(ev)
+				if ev.Type&Insert!=Insert && ev.Type&Delete!=Delete {
+					this.UnreadEvent(ev)
+				}
 				continue
 			}
 			this.ch<-ev
