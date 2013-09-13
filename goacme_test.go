@@ -8,7 +8,6 @@
 package goacme
 
 import(
-"os"
 "os/exec"
 "code.google.com/p/goplan9/plan9/client"
 "testing"
@@ -17,7 +16,7 @@ import(
 /*12:*/
 
 
-//line goacme.w:196
+//line goacme.w:195
 
 "fmt"
 "time"
@@ -33,7 +32,7 @@ import(
 /*17:*/
 
 
-//line goacme.w:249
+//line goacme.w:248
 
 "bytes"
 "errors"
@@ -43,7 +42,7 @@ import(
 /*:17*/
 
 
-//line goacme.w:107
+//line goacme.w:106
 
 )
 
@@ -62,7 +61,7 @@ t.Fatal(err)
 /*13:*/
 
 
-//line goacme.w:203
+//line goacme.w:202
 
 time.Sleep(time.Second)
 
@@ -71,7 +70,7 @@ time.Sleep(time.Second)
 /*:13*/
 
 
-//line goacme.w:120
+//line goacme.w:119
 
 }
 }
@@ -81,7 +80,7 @@ time.Sleep(time.Second)
 /*14:*/
 
 
-//line goacme.w:207
+//line goacme.w:206
 
 func TestNewOpen(t*testing.T){
 prepare(t)
@@ -107,7 +106,7 @@ f.Close()
 /*18:*/
 
 
-//line goacme.w:254
+//line goacme.w:253
 
 func TestReadWrite(t*testing.T){
 w,err:=New()
@@ -143,180 +142,10 @@ t.Fatal(errors.New("buffers don't match"))
 
 
 
-/*27:*/
+/*26:*/
 
 
-//line goacme.w:372
-
-func TestPipeTo(t*testing.T){
-w,err:=New()
-if err!=nil{
-t.Fatal(err)
-}
-defer w.Close()
-defer w.Del(true)
-s:="test"
-p,err:=w.PipeTo("body",nil,"echo","-n",s)
-if err!=nil{
-t.Fatal(err)
-}
-p.Wait()
-p.Release()
-
-
-/*13:*/
-
-
-//line goacme.w:203
-
-time.Sleep(time.Second)
-
-
-
-/*:13*/
-
-
-//line goacme.w:387
-
-w1,err:=Open(w.id)
-if err!=nil{
-t.Fatal(err)
-}
-defer w1.Close()
-defer w1.Del(true)
-b:=make([]byte,10)
-n,err:=w1.Read(b)
-if err!=nil{
-t.Fatal(err)
-}
-if bytes.Compare([]byte(s),b[:n])!=0{
-t.Fatal(errors.New(fmt.Sprintf("buffers don't match: %q and %q",s,string(b))))
-}
-}
-
-
-
-/*:27*/
-
-
-
-/*29:*/
-
-
-//line goacme.w:432
-
-func TestPipeFrom(t*testing.T){
-w,err:=New()
-if err!=nil{
-t.Fatal(err)
-}
-s:="test"
-if _,err:=w.Write([]byte(s));err!=nil{
-t.Fatal(err)
-}
-if _,err:=w.Seek(0,0);err!=nil{
-t.Fatal(err)
-}
-f,err:=os.OpenFile("/tmp/goacme.test",os.O_RDWR|os.O_TRUNC|os.O_CREATE,0600)
-if err!=nil{
-t.Fatal(err)
-}
-defer f.Close()
-p,err:=w.PipeFrom("body",f,"cat")
-if err!=nil{
-t.Fatal(err)
-}
-w.Del(true)
-w.Close()
-p.Wait()
-p.Release()
-
-
-/*13:*/
-
-
-//line goacme.w:203
-
-time.Sleep(time.Second)
-
-
-
-/*:13*/
-
-
-//line goacme.w:458
-
-if _,err:=f.Seek(0,0);err!=nil{
-t.Fatal(err)
-}
-b:=make([]byte,10)
-n,err:=f.Read(b)
-if err!=nil{
-t.Fatal(err)
-}
-if bytes.Compare([]byte(s),b[:n])!=0{
-t.Fatal(errors.New(fmt.Sprintf("buffers don't match: %q and %q",s,string(b))))
-}
-}
-
-
-
-/*:29*/
-
-
-
-/*31:*/
-
-
-//line goacme.w:500
-
-func TestSysRun(t*testing.T){
-s:="test"
-f,p,err:=SysRun("echo","-n",s)
-if err!=nil{
-t.Fatal(err)
-}
-p.Wait()
-p.Release()
-
-
-/*13:*/
-
-
-//line goacme.w:203
-
-time.Sleep(time.Second)
-
-
-
-/*:13*/
-
-
-//line goacme.w:509
-
-b:=make([]byte,10)
-if _,err:=f.Seek(0,0);err!=nil{
-t.Fatal(err)
-}
-n,err:=f.Read(b)
-if err!=nil{
-t.Fatal(err)
-}
-if bytes.Compare([]byte(s),b[:n])!=0{
-t.Fatal(errors.New(fmt.Sprintf("buffers don't match: %q and %q",s,string(b))))
-}
-}
-
-
-
-/*:31*/
-
-
-
-/*33:*/
-
-
-//line goacme.w:540
+//line goacme.w:354
 
 func TestDel(t*testing.T){
 w,err:=New()
@@ -333,14 +162,14 @@ t.Fatal(errors.New(fmt.Sprintf("window %d is still opened",w.id)))
 
 
 
-/*:33*/
+/*:26*/
 
 
 
-/*40:*/
+/*33:*/
 
 
-//line goacme.w:607
+//line goacme.w:421
 
 func TestDeleteAll(t*testing.T){
 var l[10]int
@@ -362,14 +191,14 @@ t.Fatal(errors.New(fmt.Sprintf("window %d is still opened",v)))
 
 
 
-/*:40*/
+/*:33*/
 
 
 
-/*67:*/
+/*60:*/
 
 
-//line goacme.w:940
+//line goacme.w:754
 
 func TestEvent(t*testing.T){
 w,err:=New()
@@ -424,14 +253,14 @@ t.Fatal(err)
 
 
 
-/*:67*/
+/*:60*/
 
 
 
-/*70:*/
+/*63:*/
 
 
-//line goacme.w:1024
+//line goacme.w:838
 
 func TestWriteReadAddr(t*testing.T){
 w,err:=New()
@@ -460,14 +289,14 @@ t.Fatal(errors.New(fmt.Sprintf("Something wrong with address: %v, %v",b,e)))
 
 
 
-/*:70*/
+/*:63*/
 
 
 
-/*73:*/
+/*66:*/
 
 
-//line goacme.w:1099
+//line goacme.w:913
 
 func TestWriteReadCtl(t*testing.T){
 w,err:=New()
@@ -496,10 +325,10 @@ t.Fatal(errors.New(fmt.Sprintf("The window has to be clean\n")))
 
 
 
-/*:73*/
+/*:66*/
 
 
-//line goacme.w:124
+//line goacme.w:123
 
 
 
