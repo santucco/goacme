@@ -663,14 +663,15 @@ ch	chan *Event
 @c
 // |EventChannel| returns a channel of |*Event| with a buffer |size|
 // from which events can be read or |error|.
-// Only |ActionOrigin|s set in |omask| and |ActionType|s set in |tmask| are used.
+// Only |ActionType|s set in |tmask| are used.
 // If |TagMask| is set in |tmask|, the event will be masked by tag. Otherwise |Tag| flag will be ignored.
 // First call of |EventChannel| starts a goroutine to read events from |"event"| file
 // and put them to the channel. Subsequent calls of |EventChannel| will return the same channel.
-func (this *Window) EventChannel(size int, omask ActionOrigin, tmask ActionType) (<-chan *Event, error) {
+func (this *Window) EventChannel(size int, tmask ActionType) (<-chan *Event, error) {
 	if this.ch!=nil {
 		return this.ch, nil
 	}
+	@<Trying to restrict events by type@>
 	f,err:=this.File("event")
 	if err!=nil	{
 		return nil, err
@@ -681,7 +682,7 @@ func (this *Window) EventChannel(size int, omask ActionOrigin, tmask ActionType)
 	this.ch=make(chan *Event, size)
 	go func() {
 		for ev, err:=readEvent(f); err==nil; ev, err=readEvent(f) {
-			if ev.Origin&omask!=ev.Origin || ev.Type&tmask!=ev.Type {
+			if old && ev.Type&tmask!=ev.Type {
 				if ev.Type&Insert!=Insert && ev.Type&Delete!=Delete {
 					this.UnreadEvent(ev)
 				}
@@ -693,6 +694,34 @@ func (this *Window) EventChannel(size int, omask ActionOrigin, tmask ActionType)
 		this.ch=nil
 	} ()
 	return this.ch, nil
+}
+
+
+@ Two kinds of filtiring of events are implemented. If \.{Acme} has a support of events restriction,
+|old| is false and we do not check events because of \.{Acme} does it. Otherwise we check type
+of events.
+@<Trying to restrict events by type@>=
+old:=false
+{
+	var em string
+	if tmask&Delete==Delete {
+		em+="D"
+	}
+	if tmask&Insert==Insert {
+		em+="I"
+	}
+	if tmask&Look==Look {
+		em+="L"
+	}
+	if tmask&Execute==Execute {
+		em+="X"
+	}
+	if tmask&TagMask!=TagMask {
+		em+=strings.ToLower(em)
+	}
+	if err:=this.WriteCtl("events %s\n", em); err!=nil {
+		old=true
+	}
 }
 
 @*1 ReadEvent.
@@ -764,7 +793,7 @@ func TestEvent(t *testing.T) {
 	if _,err:=w.Write([]byte(msg+test)); err!=nil {
 		t.Fatal(err)
 	}
-	ch,err:=w.EventChannel(0,Mouse,Look|Execute)
+	ch,err:=w.EventChannel(0, Look|Execute)
 	if err!=nil {
 		t.Fatal(err)
 	}

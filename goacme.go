@@ -283,10 +283,10 @@ ActionType int
 
 
 
-/*67:*/
+/*68:*/
 
 
-//line goacme.w:941
+//line goacme.w:970
 
 wrapper struct{
 f io.ReadWriteSeeker
@@ -294,7 +294,7 @@ f io.ReadWriteSeeker
 
 
 
-/*:67*/
+/*:68*/
 
 
 //line goacme.w:87
@@ -359,10 +359,10 @@ ErrInvalidType= errors.New("invalid type of action")
 
 
 
-/*57:*/
+/*58:*/
 
 
-//line goacme.w:699
+//line goacme.w:728
 
 // ErrChannelAlreadyOpened will be returned
 // if channel of events is opened by call of EventChannel
@@ -370,7 +370,7 @@ ErrChannelAlreadyOpened= errors.New("channel of events is already opened")
 
 
 
-/*:57*/
+/*:58*/
 
 
 //line goacme.w:91
@@ -651,10 +651,10 @@ return 0,err
 }
 
 
-/*69:*/
+/*70:*/
 
 
-//line goacme.w:976
+//line goacme.w:1005
 
 f= &wrapper{f:f}
 
@@ -662,7 +662,7 @@ f= &wrapper{f:f}
 
 
 
-/*:69*/
+/*:70*/
 
 
 //line goacme.w:243
@@ -723,10 +723,10 @@ this.files[file]= fid
 var f io.ReadWriteSeeker= fid
 
 
-/*69:*/
+/*70:*/
 
 
-//line goacme.w:976
+//line goacme.w:1005
 
 f= &wrapper{f:f}
 
@@ -734,7 +734,7 @@ f= &wrapper{f:f}
 
 
 
-/*:69*/
+/*:70*/
 
 
 //line goacme.w:333
@@ -989,14 +989,51 @@ return&ev,nil
 
 // EventChannel returns a channel of *Event with a buffer size
 // from which events can be read or error.
-// Only ActionOrigins set in omask and ActionTypes set in tmask are used.
+// Only ActionTypes set in tmask are used.
 // If TagMask is set in tmask, the event will be masked by tag. Otherwise Tag flag will be ignored.
 // First call of EventChannel starts a goroutine to read events from "event" file
 // and put them to the channel. Subsequent calls of EventChannel will return the same channel.
-func(this*Window)EventChannel(size int,omask ActionOrigin,tmask ActionType)(<-chan*Event,error){
+func(this*Window)EventChannel(size int,tmask ActionType)(<-chan*Event,error){
 if this.ch!=nil{
 return this.ch,nil
 }
+
+
+/*57:*/
+
+
+//line goacme.w:703
+
+old:=false
+{
+var em string
+if tmask&Delete==Delete{
+em+= "D"
+}
+if tmask&Insert==Insert{
+em+= "I"
+}
+if tmask&Look==Look{
+em+= "L"
+}
+if tmask&Execute==Execute{
+em+= "X"
+}
+if tmask&TagMask!=TagMask{
+em+= strings.ToLower(em)
+}
+if err:=this.WriteCtl("events %s\n",em);err!=nil{
+old= true
+}
+}
+
+
+
+/*:57*/
+
+
+//line goacme.w:674
+
 f,err:=this.File("event")
 if err!=nil{
 return nil,err
@@ -1007,7 +1044,7 @@ tmask|= Tag
 this.ch= make(chan*Event,size)
 go func(){
 for ev,err:=readEvent(f);err==nil;ev,err= readEvent(f){
-if ev.Origin&omask!=ev.Origin||ev.Type&tmask!=ev.Type{
+if old&&ev.Type&tmask!=ev.Type{
 if ev.Type&Insert!=Insert&&ev.Type&Delete!=Delete{
 this.UnreadEvent(ev)
 }
@@ -1023,14 +1060,15 @@ return this.ch,nil
 
 
 
+
 /*:56*/
 
 
 
-/*58:*/
+/*59:*/
 
 
-//line goacme.w:705
+//line goacme.w:734
 
 //  reads an event from "event" file of the window and returns *Event or error
 func(this*Window)ReadEvent()(*Event,error){
@@ -1047,14 +1085,14 @@ return readEvent(f)
 
 
 
-/*:58*/
+/*:59*/
 
 
 
-/*59:*/
+/*60:*/
 
 
-//line goacme.w:720
+//line goacme.w:749
 
 // UnreadEvent writes event ev back to the "event" file,
 // indicating to acme that it should be handled internally.
@@ -1090,14 +1128,14 @@ return err
 
 
 
-/*:59*/
+/*:60*/
 
 
 
-/*61:*/
+/*62:*/
 
 
-//line goacme.w:807
+//line goacme.w:836
 
 // WriteAddr writes format with args in "addr" file of the window
 func(this*Window)WriteAddr(format string,args...interface{})error{
@@ -1114,14 +1152,14 @@ return err
 
 
 
-/*:61*/
+/*:62*/
 
 
 
-/*62:*/
+/*63:*/
 
 
-//line goacme.w:822
+//line goacme.w:851
 
 // ReadAddr reads the address of the next read/write operation from "addr" file of the window.
 // ReadAddr return begin and end offsets in symbols or error
@@ -1139,14 +1177,14 @@ return
 
 
 
-/*:62*/
+/*:63*/
 
 
 
-/*64:*/
+/*65:*/
 
 
-//line goacme.w:865
+//line goacme.w:894
 
 // WriteCtl writes format with args in "ctl" file of the window
 // In case format is not ended by newline, '\n' will be added to the end of format
@@ -1168,14 +1206,14 @@ return err
 
 
 
-/*:64*/
+/*:65*/
 
 
 
-/*65:*/
+/*66:*/
 
 
-//line goacme.w:885
+//line goacme.w:914
 
 // ReadCtl reads the address of the next read/write operation from "ctl" file of the window.
 // ReadCtl returns:
@@ -1205,14 +1243,14 @@ return
 
 
 
-/*:65*/
+/*:66*/
 
 
 
-/*68:*/
+/*69:*/
 
 
-//line goacme.w:947
+//line goacme.w:976
 
 func(this*wrapper)Read(p[]byte)(int,error){
 return this.f.Read(p)
@@ -1243,6 +1281,6 @@ return this.f.Seek(offset,whence)
 
 
 
-/*:68*/
+/*:69*/
 
 
