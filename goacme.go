@@ -283,10 +283,10 @@ ActionType int
 
 
 
-/*68:*/
+/*69:*/
 
 
-//line goacme.w:970
+//line goacme.w:980
 
 wrapper struct{
 f io.ReadWriteSeeker
@@ -294,7 +294,7 @@ f io.ReadWriteSeeker
 
 
 
-/*:68*/
+/*:69*/
 
 
 //line goacme.w:87
@@ -547,6 +547,22 @@ lwin= this
 /*:30*/
 
 
+
+/*64:*/
+
+
+//line goacme.w:867
+
+if _,err:=this.File("addr");err!=nil{
+return nil,err
+}
+
+
+
+
+/*:64*/
+
+
 //line goacme.w:181
 
 return this,nil
@@ -651,10 +667,10 @@ return 0,err
 }
 
 
-/*70:*/
+/*71:*/
 
 
-//line goacme.w:1005
+//line goacme.w:1015
 
 f= &wrapper{f:f}
 
@@ -662,7 +678,7 @@ f= &wrapper{f:f}
 
 
 
-/*:70*/
+/*:71*/
 
 
 //line goacme.w:243
@@ -723,10 +739,10 @@ this.files[file]= fid
 var f io.ReadWriteSeeker= fid
 
 
-/*70:*/
+/*71:*/
 
 
-//line goacme.w:1005
+//line goacme.w:1015
 
 f= &wrapper{f:f}
 
@@ -734,7 +750,7 @@ f= &wrapper{f:f}
 
 
 
-/*:70*/
+/*:71*/
 
 
 //line goacme.w:333
@@ -1181,10 +1197,10 @@ return
 
 
 
-/*65:*/
+/*66:*/
 
 
-//line goacme.w:894
+//line goacme.w:901
 
 // WriteCtl writes format with args in "ctl" file of the window
 // In case format is not ended by newline, '\n' will be added to the end of format
@@ -1199,6 +1215,9 @@ format= fmt.Sprintf(format,args...)
 if len(format)>=0&&format[len(format)-1]!='\n'{
 format+= "\n"
 }
+if _,err= f.Seek(0,0);err!=nil{
+return err
+}
 _,err= f.Write([]byte(format))
 return err
 }
@@ -1206,14 +1225,14 @@ return err
 
 
 
-/*:65*/
+/*:66*/
 
 
 
-/*66:*/
+/*67:*/
 
 
-//line goacme.w:914
+//line goacme.w:924
 
 // ReadCtl reads the address of the next read/write operation from "ctl" file of the window.
 // ReadCtl returns:
@@ -1243,14 +1262,14 @@ return
 
 
 
-/*:66*/
+/*:67*/
 
 
 
-/*69:*/
+/*70:*/
 
 
-//line goacme.w:976
+//line goacme.w:986
 
 func(this*wrapper)Read(p[]byte)(int,error){
 return this.f.Read(p)
@@ -1281,6 +1300,6 @@ return this.f.Seek(offset,whence)
 
 
 
-/*:69*/
+/*:70*/
 
 
