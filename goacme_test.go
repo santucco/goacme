@@ -257,10 +257,10 @@ t.Fatal(err)
 
 
 
-/*64:*/
+/*65:*/
 
 
-//line goacme.w:867
+//line goacme.w:874
 
 func TestWriteReadAddr(t*testing.T){
 w,err:=New()
@@ -289,14 +289,14 @@ t.Fatal(errors.New(fmt.Sprintf("Something wrong with address: %v, %v",b,e)))
 
 
 
-/*:64*/
+/*:65*/
 
 
 
-/*67:*/
+/*68:*/
 
 
-//line goacme.w:942
+//line goacme.w:952
 
 func TestWriteReadCtl(t*testing.T){
 w,err:=New()
@@ -325,7 +325,7 @@ t.Fatal(errors.New(fmt.Sprintf("The window has to be clean\n")))
 
 
 
-/*:67*/
+/*:68*/
 
 
 //line goacme.w:123

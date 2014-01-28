@@ -1,11 +1,11 @@
-% This file is part of goacme package version 0.6
+% This file is part of goacme package version 0.61
 % Author Alexander Sychev
 
-\def\title{goacme (version 0.6)}
+\def\title{goacme (version 0.61)}
 \def\topofcontents{\null\vfill
 	\centerline{\titlefont The {\ttitlefont goacme} package for manipulating {\ttitlefont plumb} messages}
 	\vskip 15pt
-	\centerline{(version 0.6)}
+	\centerline{(version 0.61)}
 	\vfill}
 \def\botofcontents{\vfill
 \noindent
@@ -863,6 +863,13 @@ func (this *Window) ReadAddr() (begin int, end int, err error) {
 	return
 }
 
+@ We should have |"addr"| file is opened because \.{Acme} clears internal address range when |"addr"| is being opened.
+@<Init of |Window| members@>=
+if _,err:=this.File("addr"); err!=nil {
+	return nil, err
+}
+
+
 @ Tests for operations with addresses
 @<Test routines@>=
 func TestWriteReadAddr(t *testing.T) {
@@ -904,6 +911,9 @@ func (this *Window) WriteCtl(format string, args ...interface{}) error {
 	}
 	if len(format)>=0 && format[len(format)-1]!='\n' {
 		format+="\n"
+	}
+	if _,err=f.Seek(0,0); err!=nil {
+		return err
 	}
 	_,err=f.Write([]byte(format))
 	return err
