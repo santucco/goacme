@@ -1,11 +1,11 @@
-% This file is part of goacme package version 0.61
+% This file is part of goacme package version 0.62
 % Author Alexander Sychev
 
-\def\title{goacme (version 0.61)}
+\def\title{goacme (version 0.62)}
 \def\topofcontents{\null\vfill
 	\centerline{\titlefont The {\ttitlefont goacme} package for manipulating {\ttitlefont plumb} messages}
 	\vskip 15pt
-	\centerline{(version 0.61)}
+	\centerline{(version 0.62)}
 	\vfill}
 \def\botofcontents{\vfill
 \noindent
@@ -141,12 +141,13 @@ Window struct {
 @ At first we have to mount \.{Acme} namespace
 @<Variables@>=
 fsys	*client.Fsys
+once	sync.Once
 
 @
 @<Mount \.{Acme} namespace@>=
 {
 	var err error
-	new(sync.Once).Do(func(){fsys,err=client.MountService("acme")})
+	once.Do(func(){fsys,err=client.MountService("acme")})
 	if err!=nil {
 		return nil, err
 	}
