@@ -16,7 +16,7 @@ import(
 /*12:*/
 
 
-//line goacme.w:195
+//line goacme.w:196
 
 "fmt"
 "time"
@@ -32,7 +32,7 @@ import(
 /*17:*/
 
 
-//line goacme.w:248
+//line goacme.w:249
 
 "bytes"
 "errors"
@@ -61,7 +61,7 @@ t.Fatal(err)
 /*13:*/
 
 
-//line goacme.w:202
+//line goacme.w:203
 
 time.Sleep(time.Second)
 
@@ -80,7 +80,7 @@ time.Sleep(time.Second)
 /*14:*/
 
 
-//line goacme.w:206
+//line goacme.w:207
 
 func TestNewOpen(t*testing.T){
 prepare(t)
@@ -106,7 +106,7 @@ f.Close()
 /*18:*/
 
 
-//line goacme.w:253
+//line goacme.w:254
 
 func TestReadWrite(t*testing.T){
 w,err:=New()
@@ -145,7 +145,7 @@ t.Fatal(errors.New("buffers don't match"))
 /*26:*/
 
 
-//line goacme.w:354
+//line goacme.w:355
 
 func TestDel(t*testing.T){
 w,err:=New()
@@ -169,7 +169,7 @@ t.Fatal(errors.New(fmt.Sprintf("window %d is still opened",w.id)))
 /*33:*/
 
 
-//line goacme.w:421
+//line goacme.w:422
 
 func TestDeleteAll(t*testing.T){
 var l[10]int
@@ -198,7 +198,7 @@ t.Fatal(errors.New(fmt.Sprintf("window %d is still opened",v)))
 /*61:*/
 
 
-//line goacme.w:783
+//line goacme.w:784
 
 func TestEvent(t*testing.T){
 w,err:=New()
@@ -260,7 +260,7 @@ t.Fatal(err)
 /*65:*/
 
 
-//line goacme.w:874
+//line goacme.w:875
 
 func TestWriteReadAddr(t*testing.T){
 w,err:=New()
@@ -296,7 +296,7 @@ t.Fatal(errors.New(fmt.Sprintf("Something wrong with address: %v, %v",b,e)))
 /*68:*/
 
 
-//line goacme.w:952
+//line goacme.w:953
 
 func TestWriteReadCtl(t*testing.T){
 w,err:=New()
