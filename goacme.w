@@ -1,15 +1,15 @@
 % This file is part of goacme package version 0.62
 % Author Alexander Sychev
-
-\def\title{goacme (version 0.62)}
+\def\ver{0.62}
+\def\title{goacme (version \ver)}
 \def\topofcontents{\null\vfill
 	\centerline{\titlefont The {\ttitlefont goacme} package for manipulating {\ttitlefont plumb} messages}
 	\vskip 15pt
-	\centerline{(version 0.62)}
+	\centerline{(version \ver)}
 	\vfill}
 \def\botofcontents{\vfill
 \noindent
-Copyright \copyright\ 2013 Alexander Sychev. All rights reserved.
+Copyright \copyright\ 2013, 2014 Alexander Sychev. All rights reserved.
 \bigskip\noindent
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -47,7 +47,7 @@ It is a package to manupulate windows of \.{Acme}
 
 @ Legal information.
 @c
-// Copyright (c) 2013 Alexander Sychev. All rights reserved.
+// Copyright (c) 2013, 2014 Alexander Sychev. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
