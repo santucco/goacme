@@ -9,7 +9,7 @@ package goacme
 
 import(
 "os/exec"
-"code.google.com/p/goplan9/plan9/client"
+"9fans.net/go/plan9/client"
 "testing"
 
 
@@ -20,7 +20,7 @@ import(
 
 "fmt"
 "time"
-"code.google.com/p/goplan9/plan9"
+"9fans.net/go/plan9"
 
 
 

@@ -101,7 +101,7 @@ package goacme
 
 import (
 	"os/exec"
-	"code.google.com/p/goplan9/plan9/client"
+	"9fans.net/go/plan9/client"
 	"testing"
 	@<Test specific imports@>
 )@#
@@ -133,8 +133,8 @@ Window struct {
 
 @* New.
 @<Imports@>=
-"code.google.com/p/goplan9/plan9"
-"code.google.com/p/goplan9/plan9/client"
+"9fans.net/go/plan9"
+"9fans.net/go/plan9/client"
 "sync"
 "fmt"
 
@@ -196,7 +196,7 @@ func (this *Window) Close() error {
 @<Test specific imports@>=
 "fmt"
 "time"
-"code.google.com/p/goplan9/plan9"
+"9fans.net/go/plan9"
 
 
 @
