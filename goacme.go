@@ -5,7 +5,7 @@
 
 //line goacme.w:49
 
-// Copyright (c) 2013, 2014 Alexander Sychev. All rights reserved.
+// Copyright (c) 2013, 2014, 2020 Alexander Sychev. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -43,6 +43,7 @@
 
 //line goacme.w:78
 
+
 // Package goacme provides interface to acme programming environment
 package goacme
 
@@ -52,7 +53,7 @@ import(
 /*6:*/
 
 
-//line goacme.w:135
+//line goacme.w:136
 
 "9fans.net/go/plan9"
 "9fans.net/go/plan9/client"
@@ -68,7 +69,7 @@ import(
 /*20:*/
 
 
-//line goacme.w:300
+//line goacme.w:301
 
 "io"
 
@@ -81,7 +82,7 @@ import(
 /*41:*/
 
 
-//line goacme.w:513
+//line goacme.w:515
 
 "errors"
 
@@ -94,7 +95,7 @@ import(
 /*53:*/
 
 
-//line goacme.w:641
+//line goacme.w:644
 
 "strings"
 
@@ -103,7 +104,21 @@ import(
 /*:53*/
 
 
-//line goacme.w:83
+
+/*87:*/
+
+
+//line goacme.w:1204
+
+"bufio"
+"sort"
+
+
+
+/*:87*/
+
+
+//line goacme.w:84
 
 )
 
@@ -113,7 +128,7 @@ type(
 /*5:*/
 
 
-//line goacme.w:127
+//line goacme.w:128
 
 // Window is a structure to manipulate a particular acme's window.
 Window struct{
@@ -123,7 +138,7 @@ id int
 /*21:*/
 
 
-//line goacme.w:304
+//line goacme.w:305
 
 files map[string]*client.Fid
 
@@ -136,7 +151,7 @@ files map[string]*client.Fid
 /*29:*/
 
 
-//line goacme.w:379
+//line goacme.w:380
 
 prev*Window
 next*Window
@@ -150,7 +165,7 @@ next*Window
 /*55:*/
 
 
-//line goacme.w:660
+//line goacme.w:663
 
 ch chan*Event
 
@@ -159,7 +174,7 @@ ch chan*Event
 /*:55*/
 
 
-//line goacme.w:131
+//line goacme.w:132
 
 }
 
@@ -172,7 +187,7 @@ ch chan*Event
 /*35:*/
 
 
-//line goacme.w:444
+//line goacme.w:445
 
 Event struct{
 
@@ -180,7 +195,7 @@ Event struct{
 /*40:*/
 
 
-//line goacme.w:508
+//line goacme.w:510
 
 // Origin will be an origin of action with type ActionOrigin
 Origin ActionOrigin
@@ -194,7 +209,7 @@ Origin ActionOrigin
 /*46:*/
 
 
-//line goacme.w:550
+//line goacme.w:553
 
 // Type will be an type of action with type ActionType
 Type ActionType
@@ -208,7 +223,7 @@ Type ActionType
 /*49:*/
 
 
-//line goacme.w:577
+//line goacme.w:580
 
 begin int
 // Begin is a start address of a text of the action
@@ -226,7 +241,7 @@ End int
 /*51:*/
 
 
-//line goacme.w:594
+//line goacme.w:597
 
 flag int
 // IsBuiltin is a flag the action is recognised like an \.{Acme}'s builtin
@@ -245,7 +260,7 @@ Arg string
 /*:51*/
 
 
-//line goacme.w:446
+//line goacme.w:447
 
 }
 
@@ -258,7 +273,7 @@ Arg string
 /*38:*/
 
 
-//line goacme.w:490
+//line goacme.w:491
 
 // ActionOrigin is a origin of the action
 ActionOrigin int
@@ -272,7 +287,7 @@ ActionOrigin int
 /*44:*/
 
 
-//line goacme.w:532
+//line goacme.w:534
 
 // ActionType is a type of the action
 ActionType int
@@ -286,7 +301,7 @@ ActionType int
 /*69:*/
 
 
-//line goacme.w:981
+//line goacme.w:979
 
 wrapper struct{
 f io.ReadWriteSeeker
@@ -297,7 +312,91 @@ f io.ReadWriteSeeker
 /*:69*/
 
 
-//line goacme.w:87
+
+/*72:*/
+
+
+//line goacme.w:1020
+
+Log struct{
+fid*client.Fid
+
+
+/*80:*/
+
+
+//line goacme.w:1109
+
+ch chan*LogEvent
+
+
+
+/*:80*/
+
+
+//line goacme.w:1023
+
+}
+
+
+
+/*:72*/
+
+
+
+/*75:*/
+
+
+//line goacme.w:1047
+
+// OperationType is a type of the operation
+OperationType int
+
+
+
+/*:75*/
+
+
+
+/*77:*/
+
+
+//line goacme.w:1063
+
+LogEvent struct{
+Id int
+Type OperationType
+Name string
+}
+
+
+
+/*:77*/
+
+
+
+/*84:*/
+
+
+//line goacme.w:1167
+
+Info struct{
+Id int
+TagSize int
+BodySize int
+IsDirectory bool
+IsDirty bool
+Tag[]string
+}
+
+Infos[]*Info
+
+
+
+/*:84*/
+
+
+//line goacme.w:88
 
 )
 
@@ -307,7 +406,7 @@ var(
 /*7:*/
 
 
-//line goacme.w:142
+//line goacme.w:143
 
 fsys*client.Fsys
 once sync.Once
@@ -321,7 +420,7 @@ once sync.Once
 /*28:*/
 
 
-//line goacme.w:374
+//line goacme.w:375
 
 fwin*Window
 lwin*Window
@@ -335,7 +434,7 @@ lwin*Window
 /*42:*/
 
 
-//line goacme.w:517
+//line goacme.w:519
 
 // ErrInvalidOrigin will be returned if a case of an unexpected origin of action
 ErrInvalidOrigin= errors.New("invalid origin of action")
@@ -349,7 +448,7 @@ ErrInvalidOrigin= errors.New("invalid origin of action")
 /*47:*/
 
 
-//line goacme.w:555
+//line goacme.w:558
 
 // ErrInvalidType will be returned if a case of an unexpected type of action
 ErrInvalidType= errors.New("invalid type of action")
@@ -363,7 +462,7 @@ ErrInvalidType= errors.New("invalid type of action")
 /*58:*/
 
 
-//line goacme.w:729
+//line goacme.w:732
 
 // ErrChannelAlreadyOpened will be returned
 // if channel of events is opened by call of EventChannel
@@ -374,7 +473,27 @@ ErrChannelAlreadyOpened= errors.New("channel of events is already opened")
 /*:58*/
 
 
-//line goacme.w:91
+
+/*78:*/
+
+
+//line goacme.w:1071
+
+operations= map[string]OperationType{
+"new":NewWin,
+"zerox":Zerox,
+"get":Get,
+"put":Put,
+"del":DelWin,
+"focus":Focus,
+}
+
+
+
+/*:78*/
+
+
+//line goacme.w:92
 
 )
 
@@ -383,9 +502,10 @@ ErrChannelAlreadyOpened= errors.New("channel of events is already opened")
 /*39:*/
 
 
-//line goacme.w:495
+//line goacme.w:496
 
 const(
+Unknown ActionOrigin= 0
 // Edit is the origin for writes to the body or tag file
 Edit ActionOrigin= 1<<iota
 // File is the origin for through the window's other files
@@ -405,7 +525,7 @@ Mouse
 /*45:*/
 
 
-//line goacme.w:537
+//line goacme.w:539
 
 const(
 Delete ActionType= 1<<iota
@@ -416,6 +536,7 @@ Execute
 Tag
 // TagMask is a mask points out the event should be masked by tag
 TagMask
+AllTypes= Delete|Insert|Look|Execute
 )
 
 
@@ -423,7 +544,27 @@ TagMask
 /*:45*/
 
 
-//line goacme.w:94
+
+/*76:*/
+
+
+//line goacme.w:1052
+
+const(
+NewWin OperationType= 1<<iota
+Zerox
+Get
+Put
+DelWin
+Focus
+)
+
+
+
+/*:76*/
+
+
+//line goacme.w:95
 
 
 
@@ -436,7 +577,7 @@ TagMask
 /*9:*/
 
 
-//line goacme.w:157
+//line goacme.w:158
 
 // New creates a new window and returns *Window or error
 func New()(*Window,error){
@@ -445,7 +586,7 @@ func New()(*Window,error){
 /*8:*/
 
 
-//line goacme.w:147
+//line goacme.w:148
 
 {
 var err error
@@ -460,7 +601,7 @@ return nil,err
 /*:8*/
 
 
-//line goacme.w:160
+//line goacme.w:161
 
 f,err:=fsys.Open("new/ctl",plan9.OREAD)
 if err!=nil{
@@ -483,7 +624,7 @@ return Open(id)
 /*10:*/
 
 
-//line goacme.w:174
+//line goacme.w:175
 
 // Open opens a window with a specified id and returns *Window or error
 func Open(id int)(*Window,error){
@@ -492,7 +633,7 @@ func Open(id int)(*Window,error){
 /*8:*/
 
 
-//line goacme.w:147
+//line goacme.w:148
 
 {
 var err error
@@ -507,7 +648,7 @@ return nil,err
 /*:8*/
 
 
-//line goacme.w:177
+//line goacme.w:178
 
 if err:=fsys.Access(fmt.Sprintf("%d",id),plan9.OREAD);err!=nil{
 return nil,err
@@ -518,7 +659,7 @@ this:=&Window{id:id}
 /*22:*/
 
 
-//line goacme.w:308
+//line goacme.w:309
 
 this.files= make(map[string]*client.Fid)
 
@@ -531,7 +672,7 @@ this.files= make(map[string]*client.Fid)
 /*30:*/
 
 
-//line goacme.w:384
+//line goacme.w:385
 
 this.prev= lwin
 this.next= nil
@@ -552,7 +693,7 @@ lwin= this
 /*64:*/
 
 
-//line goacme.w:868
+//line goacme.w:866
 
 if _,err:=this.File("addr");err!=nil{
 return nil,err
@@ -564,7 +705,7 @@ return nil,err
 /*:64*/
 
 
-//line goacme.w:182
+//line goacme.w:183
 
 return this,nil
 }
@@ -578,7 +719,7 @@ return this,nil
 /*11:*/
 
 
-//line goacme.w:187
+//line goacme.w:188
 
 // Close releases all resources of the window
 func(this*Window)Close()error{
@@ -587,7 +728,7 @@ func(this*Window)Close()error{
 /*23:*/
 
 
-//line goacme.w:312
+//line goacme.w:313
 
 for _,v:=range this.files{
 v.Close()
@@ -602,7 +743,7 @@ v.Close()
 /*31:*/
 
 
-//line goacme.w:396
+//line goacme.w:397
 
 if this.next!=nil{
 this.next.prev= this.prev
@@ -622,7 +763,7 @@ lwin= this.prev
 /*:31*/
 
 
-//line goacme.w:190
+//line goacme.w:191
 
 return nil
 }
@@ -636,7 +777,7 @@ return nil
 /*15:*/
 
 
-//line goacme.w:224
+//line goacme.w:225
 
 // Read reads len(p) bytes from "body" file of the window.
 // Read returns a count of read bytes or error.
@@ -657,7 +798,7 @@ return f.Read(p)
 /*16:*/
 
 
-//line goacme.w:236
+//line goacme.w:237
 
 // Write writes len(p) bytes to "body" file of the window.
 // Write returns a count of written bytes or error.
@@ -671,18 +812,16 @@ return 0,err
 /*71:*/
 
 
-//line goacme.w:1016
+//line goacme.w:1014
 
 f= &wrapper{f:f}
-
-
 
 
 
 /*:71*/
 
 
-//line goacme.w:244
+//line goacme.w:245
 
 return f.Write(p)
 }
@@ -696,7 +835,7 @@ return f.Write(p)
 /*19:*/
 
 
-//line goacme.w:284
+//line goacme.w:285
 
 // Seek sets a position for the next Read or Write to offset, interpreted
 // according to whence: 0 means relative to the origin of the file, 1 means
@@ -721,7 +860,7 @@ return f.Seek(offset,whence)
 /*24:*/
 
 
-//line goacme.w:318
+//line goacme.w:319
 
 // File returns io.ReadWriteSeeker of corresponding file of the windows or error
 func(this*Window)File(file string)(io.ReadWriteSeeker,error){
@@ -743,18 +882,16 @@ var f io.ReadWriteSeeker= fid
 /*71:*/
 
 
-//line goacme.w:1016
+//line goacme.w:1014
 
 f= &wrapper{f:f}
-
-
 
 
 
 /*:71*/
 
 
-//line goacme.w:334
+//line goacme.w:335
 
 return f,nil
 }
@@ -768,7 +905,7 @@ return f,nil
 /*25:*/
 
 
-//line goacme.w:339
+//line goacme.w:340
 
 // Del deletes the window, without a prompt if sure is true.
 func(this*Window)Del(sure bool)error{
@@ -793,7 +930,7 @@ return err
 /*32:*/
 
 
-//line goacme.w:412
+//line goacme.w:413
 
 // DeleteAll deletes all the windows opened in a session
 func DeleteAll(){
@@ -812,7 +949,7 @@ fwin.Close()
 /*36:*/
 
 
-//line goacme.w:452
+//line goacme.w:453
 
 func readFields(r io.Reader)(o rune,t rune,b int,e int,f int,s string,err error){
 var l int
@@ -844,7 +981,7 @@ return
 /*37:*/
 
 
-//line goacme.w:475
+//line goacme.w:476
 
 func readEvent(r io.Reader)(*Event,error){
 o,t,b,e,f,s,err:=readFields(r)
@@ -857,14 +994,14 @@ var ev Event
 /*43:*/
 
 
-//line goacme.w:522
+//line goacme.w:524
 
 switch o{
 case'E':ev.Origin= Edit
 case'F':ev.Origin= File
 case'K':ev.Origin= Keyboard
 case'M':ev.Origin= Mouse
-default:return nil,ErrInvalidOrigin
+default:ev.Origin= Unknown
 }
 
 
@@ -872,14 +1009,14 @@ default:return nil,ErrInvalidOrigin
 /*:43*/
 
 
-//line goacme.w:482
+//line goacme.w:483
 
 
 
 /*48:*/
 
 
-//line goacme.w:560
+//line goacme.w:563
 
 switch t{
 case'D':ev.Type= Delete
@@ -898,14 +1035,14 @@ default:return nil,ErrInvalidType
 /*:48*/
 
 
-//line goacme.w:483
+//line goacme.w:484
 
 
 
 /*50:*/
 
 
-//line goacme.w:586
+//line goacme.w:589
 
 ev.begin= b
 ev.Begin= b
@@ -917,14 +1054,14 @@ ev.End= e
 /*:50*/
 
 
-//line goacme.w:484
+//line goacme.w:485
 
 
 
 /*52:*/
 
 
-//line goacme.w:608
+//line goacme.w:611
 
 ev.flag= f
 
@@ -960,7 +1097,7 @@ return nil,err
 /*54:*/
 
 
-//line goacme.w:645
+//line goacme.w:648
 
 if len(ev.Text)> 0{
 f:=strings.Fields(ev.Text)
@@ -980,7 +1117,7 @@ ev.Arg= strings.Join(f[1:]," ")+s
 /*:54*/
 
 
-//line goacme.w:638
+//line goacme.w:641
 
 
 
@@ -988,7 +1125,7 @@ ev.Arg= strings.Join(f[1:]," ")+s
 /*:52*/
 
 
-//line goacme.w:485
+//line goacme.w:486
 
 return&ev,nil
 }
@@ -1002,7 +1139,7 @@ return&ev,nil
 /*56:*/
 
 
-//line goacme.w:664
+//line goacme.w:667
 
 // EventChannel returns a channel of *Event with a buffer size
 // from which events can be read or error.
@@ -1019,7 +1156,7 @@ return this.ch,nil
 /*57:*/
 
 
-//line goacme.w:704
+//line goacme.w:707
 
 old:=false
 {
@@ -1049,7 +1186,7 @@ old= true
 /*:57*/
 
 
-//line goacme.w:675
+//line goacme.w:678
 
 f,err:=this.File("event")
 if err!=nil{
@@ -1085,7 +1222,7 @@ return this.ch,nil
 /*59:*/
 
 
-//line goacme.w:735
+//line goacme.w:738
 
 //  reads an event from "event" file of the window and returns *Event or error
 func(this*Window)ReadEvent()(*Event,error){
@@ -1109,7 +1246,7 @@ return readEvent(f)
 /*60:*/
 
 
-//line goacme.w:750
+//line goacme.w:756
 
 // UnreadEvent writes event ev back to the "event" file,
 // indicating to acme that it should be handled internally.
@@ -1120,26 +1257,18 @@ return err
 }
 var o rune
 switch ev.Origin{
-case Edit:o= 'E'
-case File:o= 'F'
-case Keyboard:o= 'K'
 case Mouse:o= 'M'
 default:return ErrInvalidOrigin
 }
 var t rune
 switch ev.Type{
-case Delete:t= 'D'
-case Delete|Tag:t= 'd'
-case Insert:t= 'I'
-case Insert|Tag:t= 'i'
 case Look:t= 'L'
 case Look|Tag:t= 'l'
 case Execute:t= 'X'
 case Execute|Tag:t= 'x'
 default:return ErrInvalidType
 }
-
-_,err= fmt.Fprintf(f,"%c%c%d %d\n",o,t,ev.begin,ev.end)
+_,err= fmt.Fprintf(f,"%c%c%d %d \n",o,t,ev.begin,ev.end)
 return err
 }
 
@@ -1152,7 +1281,7 @@ return err
 /*62:*/
 
 
-//line goacme.w:837
+//line goacme.w:835
 
 // WriteAddr writes format with args in "addr" file of the window
 func(this*Window)WriteAddr(format string,args...interface{})error{
@@ -1176,7 +1305,7 @@ return err
 /*63:*/
 
 
-//line goacme.w:852
+//line goacme.w:850
 
 // ReadAddr reads the address of the next read/write operation from "addr" file of the window.
 // ReadAddr return begin and end offsets in symbols or error
@@ -1201,7 +1330,7 @@ return
 /*66:*/
 
 
-//line goacme.w:902
+//line goacme.w:900
 
 // WriteCtl writes format with args in "ctl" file of the window
 // In case format is not ended by newline, '\n' will be added to the end of format
@@ -1233,7 +1362,7 @@ return err
 /*67:*/
 
 
-//line goacme.w:925
+//line goacme.w:923
 
 // ReadCtl reads the address of the next read/write operation from "ctl" file of the window.
 // ReadCtl returns:
@@ -1241,7 +1370,7 @@ return err
 //    tlen - number of characters (runes) in the tag;
 //    blen - number of characters in the body;
 //    isdir -  true if the window is a directory, false otherwise;
-//    isdirty - true if the window is modified, falseotherwise;
+//    isdirty - true if the window is modified, false otherwise;
 //    wwidth - the width of the window in pixels;
 //    font - the name of the font used in the window;
 //    twidth - the width of a tab character in pixels;
@@ -1251,7 +1380,7 @@ f,err:=this.File("ctl")
 if err!=nil{
 return
 }
-if _,err= f.Seek(0,0);err!=nil{
+if _,err= f.(io.Seeker).Seek(0,0);err!=nil{
 return
 }
 var dir,dirty int
@@ -1270,7 +1399,7 @@ return
 /*70:*/
 
 
-//line goacme.w:987
+//line goacme.w:985
 
 func(this*wrapper)Read(p[]byte)(int,error){
 return this.f.Read(p)
@@ -1302,5 +1431,231 @@ return this.f.Seek(offset,whence)
 
 
 /*:70*/
+
+
+
+/*73:*/
+
+
+//line goacme.w:1027
+
+// OpenLog opens the log and returns *Log or error
+func OpenLog()(*Log,error){
+
+
+/*8:*/
+
+
+//line goacme.w:148
+
+{
+var err error
+once.Do(func(){fsys,err= client.MountService("acme")})
+if err!=nil{
+return nil,err
+}
+}
+
+
+
+/*:8*/
+
+
+//line goacme.w:1030
+
+f,err:=fsys.Open("log",plan9.OREAD)
+if err!=nil{
+return nil,err
+}
+return&Log{fid:f},nil
+}
+
+
+
+/*:73*/
+
+
+
+/*74:*/
+
+
+//line goacme.w:1039
+
+// Close close the log
+func(this*Log)Close()error{
+return this.fid.Close()
+}
+
+
+
+
+/*:74*/
+
+
+
+/*79:*/
+
+
+//line goacme.w:1082
+
+// Read reads a log of window operations  of the window from the log.
+// Read returns LogEvent or error.
+func(this*Log)Read()(*LogEvent,error){
+var id int
+var op string
+var n string
+var b[8168]byte
+c,err:=this.fid.Read(b[:])
+if err!=nil{
+return nil,err
+}
+_,err= fmt.Sscan(string(b[:c]),&id,&op,&n)
+if err!=nil{
+_,err= fmt.Sscan(string(b[:c]),&id,&op)
+}
+if err!=nil{
+return nil,err
+}
+t,ok:=operations[op]
+if!ok{
+return nil,errors.New("unexpected operation code")
+}
+return&LogEvent{Id:id,Type:t,Name:n},nil
+}
+
+
+
+/*:79*/
+
+
+
+/*81:*/
+
+
+//line goacme.w:1113
+
+// EventChannel returns a channel of *LogEvent
+// from which log events can be read or error.
+// Only OperationType set in tmask are used.
+// First call of EventChannel starts a goroutine to read events from the log
+// and put them to the channel. Subsequent calls of EventChannel will return the same channel.
+func(this*Log)EventChannel(tmask OperationType)(<-chan*LogEvent,error){
+if this.ch!=nil{
+return this.ch,nil
+}
+this.ch= make(chan*LogEvent)
+go func(){
+for ev,err:=this.Read();err==nil;ev,err= this.Read(){
+if ev.Type&tmask!=ev.Type{
+continue
+}
+this.ch<-ev
+}
+close(this.ch)
+this.ch= nil
+}()
+return this.ch,nil
+}
+
+
+
+/*:81*/
+
+
+
+/*85:*/
+
+
+//line goacme.w:1180
+
+func(this Infos)Len()int{
+return len(this)
+}
+
+func(this Infos)Less(i,j int)bool{
+return this[i].Id<this[j].Id
+}
+
+func(this Infos)Swap(i,j int){
+this[i],this[j]= this[j],this[i]
+}
+
+
+
+/*:85*/
+
+
+
+/*86:*/
+
+
+//line goacme.w:1194
+
+// Get returns Info by id or an error
+func(this Infos)Get(id int)(*Info,error){
+i:=sort.Search(this.Len(),func(i int)bool{return this[i].Id==id})
+if i<this.Len()&&this[i].Id==id{
+return this[i],nil
+}
+return nil,errors.New(fmt.Sprintf("window with id=%d has not been found",id))
+}
+
+
+/*:86*/
+
+
+
+/*88:*/
+
+
+//line goacme.w:1209
+
+// WindowsInfo returns a list of the existing acme windows.
+func WindowsInfo()(res Infos,err error){
+
+
+/*8:*/
+
+
+//line goacme.w:148
+
+{
+var err error
+once.Do(func(){fsys,err= client.MountService("acme")})
+if err!=nil{
+return nil,err
+}
+}
+
+
+
+/*:8*/
+
+
+//line goacme.w:1212
+
+f,err:=fsys.Open("index",plan9.OREAD)
+if err!=nil{
+return nil,err
+}
+defer f.Close()
+r:=bufio.NewReader(f)
+if r==nil{
+return nil,errors.New("cannot create reader for index file")
+}
+for s,err:=r.ReadString('\n');err==nil;s,err= r.ReadString('\n'){
+var id,ts,bs,d,m int
+if _,err:=fmt.Sscanf(s,"%v %v %v %v %v",&id,&ts,&bs,&d,&m);err!=nil{
+continue
+}
+res= append(res,&Info{Id:id,TagSize:ts,BodySize:bs,IsDirectory:d==1,IsDirty:m==1,Tag:strings.Split(s[12*5:]," ")})
+}
+sort.Sort(res)
+return res,nil
+}
+
+
+
+/*:88*/
 
 

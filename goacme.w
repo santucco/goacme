@@ -1,6 +1,6 @@
-% This file is part of goacme package version 0.62
+% This file is part of goacme package version 0.7
 % Author Alexander Sychev
-\def\ver{0.62}
+\def\ver{0.7}
 \def\title{goacme (version \ver)}
 \def\topofcontents{\null\vfill
 	\centerline{\titlefont The {\ttitlefont goacme} package for manipulating {\ttitlefont plumb} messages}
@@ -9,7 +9,7 @@
 	\vfill}
 \def\botofcontents{\vfill
 \noindent
-Copyright \copyright\ 2013, 2014 Alexander Sychev. All rights reserved.
+Copyright \copyright\ 2013, 2014, 2020 Alexander Sychev. All rights reserved.
 \bigskip\noindent
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -47,7 +47,7 @@ It is a package to manupulate windows of \.{Acme}
 
 @ Legal information.
 @c
-// Copyright (c) 2013, 2014 Alexander Sychev. All rights reserved.
+// Copyright (c) 2013, 2014, 2020 Alexander Sychev. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -76,6 +76,7 @@ It is a package to manupulate windows of \.{Acme}
 
 @** Implementation.
 @c
+
 // Package |goacme| provides interface to |acme| programming environment
 package goacme
 
@@ -494,6 +495,7 @@ ActionOrigin	int
 @ Here we describe variants of |ActionOrigin|
 @<Constants@>=
 const (
+	Unknown ActionOrigin = 0
 	// |Edit| is the origin for writes to the body or tag file
 	Edit		ActionOrigin = 1 << iota
 	// |File| is the origin for through the window's other files
@@ -525,7 +527,7 @@ switch o {
 	case 'F': ev.Origin=File
 	case 'K': ev.Origin=Keyboard
 	case 'M': ev.Origin=Mouse
-	default: return nil, ErrInvalidOrigin
+	default: ev.Origin=Unknown
 }
 
 @ Let's make a type for type of an action
@@ -536,7 +538,7 @@ ActionType	int
 @ Here we describe variants of |ActionType|
 @<Constants@>=
 const (
-	Delete 	ActionType = 1<< iota
+	Delete ActionType = 1<< iota
 	Insert
 	Look
 	Execute
@@ -544,6 +546,7 @@ const (
 	Tag
 	// |TagMask| is a mask points out the event should be masked by tag
 	TagMask
+	AllTypes = Delete|Insert|Look|Execute
 )
 
 @
@@ -747,6 +750,9 @@ func (this *Window) ReadEvent() (*Event, error) {
 
 
 @*1 UnreadEvent.
+Only subset of events cat be unread - events with |Mouse| origin and  |Look| and |Execute| types.
+All other events cause errors.
+
 @c
 // |UnreadEvent| writes event |ev| back to the |"event"| file,
 // indicating to acme that it should be handled internally.
@@ -757,26 +763,18 @@ func (this *Window) UnreadEvent(ev *Event) error {
 	}
 	var o rune
 	switch ev.Origin {
-		case Edit: o='E'
-		case File: o='F'
-		case Keyboard: o='K'
 		case Mouse: o='M'
 		default: return ErrInvalidOrigin
 	}
 	var t rune
 	switch ev.Type {
-		case Delete : t='D'
-		case Delete|Tag: t='d'
-		case Insert: t='I'
-		case Insert|Tag: t='i'
 		case Look: t='L'
 		case Look|Tag: t='l'
 		case Execute: t='X'
 		case Execute|Tag: t='x'
 		default: return ErrInvalidType
 	}
-
-	_,err=fmt.Fprintf(f,"%c%c%d %d\n", o, t, ev.begin, ev.end)
+	_,err=fmt.Fprintf(f,"%c%c%d %d \n", o, t, ev.begin, ev.end)
 	return err
 }
 
@@ -805,7 +803,7 @@ func TestEvent(t *testing.T) {
 	if e.Origin!=Mouse || e.Type!=Look || e.Begin!=len(msg) || e.End!=len(msg)+len(test) || e.Text!=test {
 		t.Fatal(errors.New(fmt.Sprintf("Something wrong with event: %#v",e)))
 	}
-	if _,err:=w.Write([]byte("\nChording test: select argument, press middle button of mouse on Execute and press left button of mouse without releasing middle button")); err!=nil {
+	if _,err:=w.Write([]byte("\nChording test: select 'argument', press middle button of mouse on 'Execute' and press left button of mouse without releasing middle button")); err!=nil {
 		t.Fatal(err)
 	}
 	e, ok=<-ch
@@ -929,7 +927,7 @@ func (this *Window) WriteCtl(format string, args ...interface{}) error {
 //    |tlen| - number of characters (runes) in the tag;
 //    |blen| - number of characters in the body;
 //    |isdir| -  |true| if the window is a directory, |false| otherwise;
-//    |isdirty| - |true| if the window is modified, |false|otherwise;
+//    |isdirty| - |true| if the window is modified, |false| otherwise;
 //    |wwidth| - the width of the window in pixels;
 //    |font| - the name of the font used in the window;
 //    |twidth| - the width of a tab character in pixels;
@@ -939,7 +937,7 @@ func (this *Window) ReadCtl() (id int, tlen int, blen int, isdir bool, isdirty b
 	if err!=nil{
 		return
 	}
-	if _,err=f.Seek(0,0); err!=nil {
+	if _,err=f.(io.Seeker).Seek(0,0); err!=nil {
 		return
 	}
 	var dir,dirty int
@@ -1016,6 +1014,259 @@ func (this *wrapper) Seek(offset int64, whence int) (ret int64, err error) {
 @<Convert |f| to a wrapper@>=
 f=&wrapper{f:f}
 
+@* Log
+Here is function and structures for \.{Acme}'s log.
 
+@<Types@>=
+Log struct {
+	fid *client.Fid
+	@<|Log| struct members@>
+}
+
+@* OpenLog.
+@c
+// |OpenLog| opens the log and returns |*Log| or |error|
+func OpenLog() (*Log, error) {
+	@<Mount \.{Acme} namespace@>
+	f,err:=fsys.Open("log",plan9.OREAD)
+	if err!=nil {
+		return nil, err
+	}
+	return &Log{fid: f}, nil
+}
+
+@* Close.
+@c
+// |Close| close the log
+func (this *Log) Close() error {
+	return this.fid.Close()
+}
+
+
+@ Let's make a type of an operation
+@<Types@>=
+// |OperationType| is a type of the operation
+OperationType	int
+
+@ Here we describe variants of |OperationType|
+@<Constants@>=
+const (
+	NewWin OperationType = 1<< iota
+	Zerox
+	Get
+	Put
+	DelWin
+	Focus
+)
+
+@ Also we need |LogEvent|
+@<Types@>=
+LogEvent struct {
+	Id int
+	Type OperationType
+	Name string
+}
+
+@ We need a map to reflect string operatios to |OperationType|
+@<Variables@>=
+operations = map[string]OperationType{
+    "new":  NewWin,
+    "zerox": Zerox,
+    "get": Get,
+    "put": Put,
+    "del": DelWin,
+    "focus": Focus,
+}
+
+@* Read.
+@c
+// |Read| reads a log of window operations  of the window from the log.
+// |Read| returns |LogEvent| or |error|.
+func (this *Log) Read() (*LogEvent, error) {
+	var id int
+	var op string
+	var n string
+	var b [8168]byte
+	c,err:=this.fid.Read(b[:])
+	if err!=nil {
+		return nil, err
+	}
+	_,err=fmt.Sscan(string(b[:c]), &id, &op, &n)
+	if err!=nil {
+		_,err=fmt.Sscan(string(b[:c]), &id, &op)
+	}
+	if err!=nil {
+		return nil, err
+	}
+	t,ok:=operations[op]
+	if !ok {
+		return nil, errors.New("unexpected operation code")
+	}
+	return &LogEvent{Id: id, Type: t, Name: n}, nil
+}
+
+@*1 EventChannel.
+@<|Log| struct members@>=
+ch	chan *LogEvent
+
+@
+@c
+// |EventChannel| returns a channel of |*LogEvent|
+// from which log events can be read or |error|.
+// Only |OperationType| set in |tmask| are used.
+// First call of |EventChannel| starts a goroutine to read events from the log
+// and put them to the channel. Subsequent calls of |EventChannel| will return the same channel.
+func (this *Log) EventChannel(tmask OperationType) (<-chan *LogEvent, error) {
+	if this.ch!=nil {
+		return this.ch, nil
+	}
+	this.ch=make(chan *LogEvent)
+	go func() {
+		for ev, err:=this.Read(); err==nil; ev, err=this.Read() {
+			if ev.Type&tmask!=ev.Type {
+				continue
+			}
+			this.ch<-ev
+		}
+		close(this.ch)
+		this.ch=nil
+	} ()
+	return this.ch, nil
+}
+
+@
+@<Test routines@>=
+func TestLog(t *testing.T) {
+	l,err:=OpenLog()
+	if err!=nil {
+		t.Fatal(err)
+	}
+	defer l.Close()
+	ch,err:=l.EventChannel(NewWin)
+	if err!=nil {
+		t.Fatal(err)
+	}
+	w,err:=New()
+	if err!=nil {
+		t.Fatal(err)
+	}
+	defer w.Del(true)
+	defer w.Close()
+	ev, ok:=<-ch
+	if !ok {
+		t.Fatal(errors.New("cannot read an event from log"))
+	}
+	if w.id != ev.Id {
+		t.Fatal(errors.New("unexpected window id"))
+	}
+}
+
+@* WindowsInfo.
+
+@ Also we need |LogEvent|
+@<Types@>=
+Info struct {
+	Id int
+	TagSize int
+	BodySize int
+	IsDirectory bool
+	IsDirty bool
+	Tag	[]string
+}
+
+Infos []*Info
+
+@ We need sorted |Infos| slices, so some sort.Interface function have to be implemented
+@c
+func (this Infos) Len() int {
+	return len(this)
+}
+
+func (this Infos) Less(i, j int) bool {
+	return this[i].Id < this[j].Id
+}
+
+func (this Infos) Swap(i, j int) {
+	this[i],this[j] = this[j],this[i]
+}
+
+@ Also |Get| function is implemented to obtain |Info| by |id|
+@c
+// Get returns |Info| by |id| or an error
+func (this Infos) Get(id int) (*Info, error) {
+	i:=sort.Search(this.Len(), func(i int) bool {return this[i].Id==id})
+	if i<this.Len() && this[i].Id==id {
+		return this[i], nil
+	}
+	return nil, errors.New(fmt.Sprintf("window with id=%d has not been found", id))
+}
+@
+@<Imports@>=
+"bufio"
+"sort"
+
+@
+@c
+// WindowsInfo returns a list of the existing acme windows.
+func WindowsInfo() (res Infos, err error) {
+	@<Mount \.{Acme} namespace@>
+	f,err:=fsys.Open("index",plan9.OREAD)
+	if err!=nil {
+		return nil, err
+	}
+	defer f.Close()
+	r:=bufio.NewReader(f)
+	if r==nil {
+		return nil, errors.New("cannot create reader for index file")
+	}
+	for s,err:=r.ReadString('\n'); err==nil; s,err=r.ReadString('\n') {
+		var id, ts, bs, d, m  int
+		if _,err:=fmt.Sscanf(s, "%v %v %v %v %v", &id, &ts, &bs, &d, &m); err!=nil {
+			continue
+		}
+		res=append(res, &Info{Id:id, TagSize: ts, BodySize: bs, IsDirectory: d==1, IsDirty: m==1, Tag: strings.Split(s[12*5:], " ")})
+	}
+	sort.Sort(res)
+	return res, nil
+}
+
+@
+@<Test routines@>=
+func TestWindowsInfo(t *testing.T) {
+	l1,err:=WindowsInfo()
+	if err!=nil {
+		t.Fatal(err)
+	}
+	w,err:=New()
+	if err!=nil {
+		t.Fatal(err)
+	}
+	defer w.Close()
+	l2,err:=WindowsInfo()
+	if err!=nil {
+		t.Fatal(err)
+	}
+	if len(l1)==len(l2) || l2[len(l2)-1].Id!=w.id {
+		t.Fatal(errors.New(fmt.Sprintf("something wrong with window list: %v, %v", l1, l2)))
+	}
+	if _, err:=l1.Get(w.id); err==nil {
+		t.Fatal(errors.New(fmt.Sprintf(fmt.Sprintf("window with id=%d has been found", w.id))))
+	}
+	if i2, err:=l2.Get(w.id); err!=nil || i2.Id!=w.id {
+		t.Fatal(errors.New(fmt.Sprintf(fmt.Sprintf("window with id=%d has not been found", w.id))))
+	}
+
+	w.Del(true)
+	l2,err=WindowsInfo()
+	if err!=nil {
+		t.Fatal(err)
+	}
+	if len(l1)!=len(l2) {
+		t.Fatal(errors.New(fmt.Sprintf("sizes of window lists mismatched: %v, %v", l1, l2)))
+	}
+	if _, err:=l2.Get(w.id); err==nil {
+		t.Fatal(errors.New(fmt.Sprintf(fmt.Sprintf("window with id=%d has been found", w.id))))
+	}
+}
 
 @** Index.

@@ -3,7 +3,7 @@
 /*4:*/
 
 
-//line goacme.w:99
+//line goacme.w:100
 
 package goacme
 
@@ -16,7 +16,7 @@ import(
 /*12:*/
 
 
-//line goacme.w:196
+//line goacme.w:197
 
 "fmt"
 "time"
@@ -32,7 +32,7 @@ import(
 /*17:*/
 
 
-//line goacme.w:249
+//line goacme.w:250
 
 "bytes"
 "errors"
@@ -42,7 +42,7 @@ import(
 /*:17*/
 
 
-//line goacme.w:106
+//line goacme.w:107
 
 )
 
@@ -61,7 +61,7 @@ t.Fatal(err)
 /*13:*/
 
 
-//line goacme.w:203
+//line goacme.w:204
 
 time.Sleep(time.Second)
 
@@ -70,7 +70,7 @@ time.Sleep(time.Second)
 /*:13*/
 
 
-//line goacme.w:119
+//line goacme.w:120
 
 }
 }
@@ -80,7 +80,7 @@ time.Sleep(time.Second)
 /*14:*/
 
 
-//line goacme.w:207
+//line goacme.w:208
 
 func TestNewOpen(t*testing.T){
 prepare(t)
@@ -106,7 +106,7 @@ f.Close()
 /*18:*/
 
 
-//line goacme.w:254
+//line goacme.w:255
 
 func TestReadWrite(t*testing.T){
 w,err:=New()
@@ -145,7 +145,7 @@ t.Fatal(errors.New("buffers don't match"))
 /*26:*/
 
 
-//line goacme.w:355
+//line goacme.w:356
 
 func TestDel(t*testing.T){
 w,err:=New()
@@ -169,7 +169,7 @@ t.Fatal(errors.New(fmt.Sprintf("window %d is still opened",w.id)))
 /*33:*/
 
 
-//line goacme.w:422
+//line goacme.w:423
 
 func TestDeleteAll(t*testing.T){
 var l[10]int
@@ -198,7 +198,7 @@ t.Fatal(errors.New(fmt.Sprintf("window %d is still opened",v)))
 /*61:*/
 
 
-//line goacme.w:784
+//line goacme.w:782
 
 func TestEvent(t*testing.T){
 w,err:=New()
@@ -223,7 +223,7 @@ t.Fatal(errors.New("Channel is closed"))
 if e.Origin!=Mouse||e.Type!=Look||e.Begin!=len(msg)||e.End!=len(msg)+len(test)||e.Text!=test{
 t.Fatal(errors.New(fmt.Sprintf("Something wrong with event: %#v",e)))
 }
-if _,err:=w.Write([]byte("\nChording test: select argument, press middle button of mouse on Execute and press left button of mouse without releasing middle button"));err!=nil{
+if _,err:=w.Write([]byte("\nChording test: select 'argument', press middle button of mouse on 'Execute' and press left button of mouse without releasing middle button"));err!=nil{
 t.Fatal(err)
 }
 e,ok= <-ch
@@ -260,7 +260,7 @@ t.Fatal(err)
 /*65:*/
 
 
-//line goacme.w:875
+//line goacme.w:873
 
 func TestWriteReadAddr(t*testing.T){
 w,err:=New()
@@ -296,7 +296,7 @@ t.Fatal(errors.New(fmt.Sprintf("Something wrong with address: %v, %v",b,e)))
 /*68:*/
 
 
-//line goacme.w:953
+//line goacme.w:951
 
 func TestWriteReadCtl(t*testing.T){
 w,err:=New()
@@ -328,7 +328,91 @@ t.Fatal(errors.New(fmt.Sprintf("The window has to be clean\n")))
 /*:68*/
 
 
-//line goacme.w:123
+
+/*82:*/
+
+
+//line goacme.w:1138
+
+func TestLog(t*testing.T){
+l,err:=OpenLog()
+if err!=nil{
+t.Fatal(err)
+}
+defer l.Close()
+ch,err:=l.EventChannel(NewWin)
+if err!=nil{
+t.Fatal(err)
+}
+w,err:=New()
+if err!=nil{
+t.Fatal(err)
+}
+defer w.Del(true)
+defer w.Close()
+ev,ok:=<-ch
+if!ok{
+t.Fatal(errors.New("cannot read an event from log"))
+}
+if w.id!=ev.Id{
+t.Fatal(errors.New("unexpected window id"))
+}
+}
+
+
+
+/*:82*/
+
+
+
+/*89:*/
+
+
+//line goacme.w:1234
+
+func TestWindowsInfo(t*testing.T){
+l1,err:=WindowsInfo()
+if err!=nil{
+t.Fatal(err)
+}
+w,err:=New()
+if err!=nil{
+t.Fatal(err)
+}
+defer w.Close()
+l2,err:=WindowsInfo()
+if err!=nil{
+t.Fatal(err)
+}
+if len(l1)==len(l2)||l2[len(l2)-1].Id!=w.id{
+t.Fatal(errors.New(fmt.Sprintf("something wrong with window list: %v, %v",l1,l2)))
+}
+if _,err:=l1.Get(w.id);err==nil{
+t.Fatal(errors.New(fmt.Sprintf(fmt.Sprintf("window with id=%d has been found",w.id))))
+}
+if i2,err:=l2.Get(w.id);err!=nil||i2.Id!=w.id{
+t.Fatal(errors.New(fmt.Sprintf(fmt.Sprintf("window with id=%d has not been found",w.id))))
+}
+
+w.Del(true)
+l2,err= WindowsInfo()
+if err!=nil{
+t.Fatal(err)
+}
+if len(l1)!=len(l2){
+t.Fatal(errors.New(fmt.Sprintf("sizes of window lists mismatched: %v, %v",l1,l2)))
+}
+if _,err:=l2.Get(w.id);err==nil{
+t.Fatal(errors.New(fmt.Sprintf(fmt.Sprintf("window with id=%d has been found",w.id))))
+}
+}
+
+
+
+/*:89*/
+
+
+//line goacme.w:124
 
 
 
