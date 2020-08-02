@@ -1,7 +1,6 @@
 # This file is part of goacme package version 0.7
-# Author Alexander Sychev
 #
-# Copyright (c) 2013, 2014 Alexander Sychev. All rights reserved.
+# Copyright (c) 2013, 2014, 2020 Alexander Sychev. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are

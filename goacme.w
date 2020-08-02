@@ -1,5 +1,4 @@
 % This file is part of goacme package version 0.7
-% Author Alexander Sychev
 \def\ver{0.7}
 \def\title{goacme (version \ver)}
 \def\topofcontents{\null\vfill
@@ -184,7 +183,9 @@ func Open(id int) (*Window, error) {
 	return this, nil
 }
 
-@* Close.
+@* |Window| functions.
+
+@*1 Close.
 @c
 // |Close| releases all resources of the window
 func (this *Window) Close() error {
@@ -221,7 +222,7 @@ func TestNewOpen(t *testing.T) {
 	}
 }
 
-@* Read.
+@*1 Read.
 @c
 // |Read| reads |len(p)| bytes from |"body"| file of the window.
 // |Read| returns a count of read bytes or |error|.
@@ -233,7 +234,7 @@ func (this *Window) Read(p []byte) (int, error) {
 	return f.Read(p)
 }
 
-@* Write.
+@*1 Write.
 @c
 // |Write| writes |len(p)| bytes to |"body"| file of the window.
 // |Write| returns a count of written bytes or |error|.
@@ -281,7 +282,7 @@ func TestReadWrite(t *testing.T) {
 	}
 }
 
-@* Seek.
+@*1 Seek.
 @c
 // |Seek| sets a position for the next Read or Write to |offset|, interpreted
 // according to whence: 0 means relative to the origin of the file, 1 means
@@ -297,7 +298,7 @@ func (this *Window) Seek(offset int64, whence int) (ret int64, err error) {
 
 
 
-@* File.
+@*1 File.
 @<Imports@>=
 "io"
 
@@ -336,7 +337,7 @@ func (this *Window) File(file string) (io.ReadWriteSeeker, error) {
 	return f, nil	
 }
 
-@* Del.
+@*1 Del.
 @c
 // |Del| deletes the window, without a prompt if |sure| is true.
 func (this *Window) Del(sure bool) error {
@@ -367,79 +368,8 @@ func TestDel(t *testing.T) {
 }
 
 
-@* DeleteAll.
-|DeleteAll| deletes all windows opened in a session. So all the windows should be stored
-in a list. Some global variables and |Window| members are needed for this purpose.
 
-@ |fwin| is a pointer to a first |Window| and |lwin| is a pointer to a last |Window|
-@<Variables@>=
-fwin	*Window
-lwin	*Window
-
-@ |prev| and |next| are pointer on previous |Window| and next |Window| respectively.
-@<|Window| struct members@>=
-prev	*Window
-next	*Window
-
-@ We need to place the window in the end of list of all windows
-@<Init of |Window| members@>=
-this.prev=lwin
-this.next=nil
-if fwin==nil {
-	fwin=this
-}
-if lwin!=nil {
-	lwin.next=this
-}
-lwin=this
-
-@ When |Window| is destroyed, the |Window| has to be excluded from the list of windows
-@<Releasing of |Window| members@>=
-if this.next!=nil {
-	this.next.prev=this.prev
-}
-if this.prev!=nil {
-	this.prev.next=this.next
-}
-if fwin==this {
-	fwin=this.next
-}
-if lwin==this {
-	lwin=this.prev
-}
-
-@ Some trick is used to delete all |Window| - when |fwin| is closed, |fwin| is set to |fwin.next|,
-so to delete all the windows |fwin| will be closed until |fwin| is not null.
-@c
-// |DeleteAll| deletes all the windows opened in a session
-func DeleteAll() {
-	for fwin!=nil {
-		fwin.Del(true)
-		fwin.Close()
-	}
-}
-
-@ Test of |DeleteAll| function.
-@<Test routines@>=
-func TestDeleteAll(t *testing.T) {
-	var l [10]int
-	for i:=0;i<len(l);i++ {
-		w,err:=New()
-		if err!=nil {
-			t.Fatal(err)
-		}
-		l[i]=w.id
-	}
-	DeleteAll()
-	for _,v:=range l {
-		_,err:=Open(v)
-		if err==nil {
-			t.Fatal(errors.New(fmt.Sprintf("window %d is still opened", v)))
-		}
-	}
-}
-
-@* Events processing.
+@*1 Events processing.
 
 @ At first let's describe |Event| structure. Fiels of |Event| will be specified a bit later.
 @<Types@>=
@@ -728,7 +658,7 @@ old:=false
 	}
 }
 
-@*1 ReadEvent.
+@*2 ReadEvent.
 @<Variables@>=
 // |ErrChannelAlreadyOpened| will be returned
 // if channel of events is opened by call of |EventChannel|
@@ -749,7 +679,7 @@ func (this *Window) ReadEvent() (*Event, error) {
 }
 
 
-@*1 UnreadEvent.
+@*2 UnreadEvent.
 Only subset of events cat be unread - events with |Mouse| origin and  |Look| and |Execute| types.
 All other events cause errors.
 
@@ -831,7 +761,7 @@ func TestEvent(t *testing.T) {
 	}
 }
 
-@* WriteAddr.
+@*1 WriteAddr.
 @c
 // |WriteAddr| writes |format| with |args| in |"addr"| file of the window
 func (this *Window) WriteAddr(format string, args ...interface{}) error {
@@ -846,7 +776,7 @@ func (this *Window) WriteAddr(format string, args ...interface{}) error {
 	return err
 }
 
-@* ReadAddr.
+@*1 ReadAddr.
 @c
 // |ReadAddr| reads the address of the next read/write operation from |"addr"| file of the window.
 // |ReadAddr| return |begin| and |end| offsets in symbols or |error|
@@ -896,7 +826,7 @@ func TestWriteReadAddr(t *testing.T) {
 	}
 }
 
-@* WriteCtl.
+@*1 WriteCtl.
 @c
 // |WriteCtl| writes |format| with |args| in |"ctl"| file of the window
 // In case |format| is not ended by newline, |'\n'| will be added to the end of |format|
@@ -919,7 +849,7 @@ func (this *Window) WriteCtl(format string, args ...interface{}) error {
 }
 
 
-@* ReadCtl.
+@*1 ReadCtl.
 @c
 // |ReadCtl| reads the address of the next read/write operation from |"ctl"| file of the window.
 // |ReadCtl| returns:
@@ -1014,7 +944,81 @@ func (this *wrapper) Seek(offset int64, whence int) (ret int64, err error) {
 @<Convert |f| to a wrapper@>=
 f=&wrapper{f:f}
 
-@* Log
+@* DeleteAll.
+|DeleteAll| deletes all windows opened in a session. So all the windows should be stored
+in a list. Some global variables and |Window| members are needed for this purpose.
+
+@ |fwin| is a pointer to a first |Window| and |lwin| is a pointer to a last |Window|
+@<Variables@>=
+fwin	*Window
+lwin	*Window
+
+@ |prev| and |next| are pointer on previous |Window| and next |Window| respectively.
+@<|Window| struct members@>=
+prev	*Window
+next	*Window
+
+@ We need to place the window in the end of list of all windows
+@<Init of |Window| members@>=
+this.prev=lwin
+this.next=nil
+if fwin==nil {
+	fwin=this
+}
+if lwin!=nil {
+	lwin.next=this
+}
+lwin=this
+
+@ When |Window| is destroyed, the |Window| has to be excluded from the list of windows
+@<Releasing of |Window| members@>=
+if this.next!=nil {
+	this.next.prev=this.prev
+}
+if this.prev!=nil {
+	this.prev.next=this.next
+}
+if fwin==this {
+	fwin=this.next
+}
+if lwin==this {
+	lwin=this.prev
+}
+
+@ Some trick is used to delete all |Window| - when |fwin| is closed, |fwin| is set to |fwin.next|,
+so to delete all the windows |fwin| will be closed until |fwin| is not null.
+@c
+// |DeleteAll| deletes all the windows opened in a session
+func DeleteAll() {
+	for fwin!=nil {
+		fwin.Del(true)
+		fwin.Close()
+	}
+}
+
+@ Test of |DeleteAll| function.
+@<Test routines@>=
+func TestDeleteAll(t *testing.T) {
+	var l [10]int
+	for i:=0;i<len(l);i++ {
+		w,err:=New()
+		if err!=nil {
+			t.Fatal(err)
+		}
+		l[i]=w.id
+	}
+	DeleteAll()
+	for _,v:=range l {
+		_,err:=Open(v)
+		if err==nil {
+			t.Fatal(errors.New(fmt.Sprintf("window %d is still opened", v)))
+		}
+	}
+}
+
+
+
+@* Log.
 Here is function and structures for \.{Acme}'s log.
 
 @<Types@>=
@@ -1023,7 +1027,7 @@ Log struct {
 	@<|Log| struct members@>
 }
 
-@* OpenLog.
+@*1 OpenLog.
 @c
 // |OpenLog| opens the log and returns |*Log| or |error|
 func OpenLog() (*Log, error) {
@@ -1035,7 +1039,7 @@ func OpenLog() (*Log, error) {
 	return &Log{fid: f}, nil
 }
 
-@* Close.
+@*1 Close.
 @c
 // |Close| close the log
 func (this *Log) Close() error {
@@ -1078,7 +1082,7 @@ operations = map[string]OperationType{
     "focus": Focus,
 }
 
-@* Read.
+@*1 Read.
 @c
 // |Read| reads a log of window operations  of the window from the log.
 // |Read| returns |LogEvent| or |error|.

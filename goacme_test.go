@@ -3,7 +3,7 @@
 /*4:*/
 
 
-//line goacme.w:100
+//line goacme.w:99
 
 package goacme
 
@@ -13,10 +13,10 @@ import(
 "testing"
 
 
-/*12:*/
+/*13:*/
 
 
-//line goacme.w:197
+//line goacme.w:198
 
 "fmt"
 "time"
@@ -25,24 +25,24 @@ import(
 
 
 
-/*:12*/
+/*:13*/
 
 
 
-/*17:*/
+/*18:*/
 
 
-//line goacme.w:250
+//line goacme.w:251
 
 "bytes"
 "errors"
 
 
 
-/*:17*/
+/*:18*/
 
 
-//line goacme.w:107
+//line goacme.w:106
 
 )
 
@@ -58,29 +58,29 @@ t.Fatal(err)
 }
 
 
-/*13:*/
+/*14:*/
 
 
-//line goacme.w:204
+//line goacme.w:205
 
 time.Sleep(time.Second)
 
 
 
-/*:13*/
+/*:14*/
 
 
-//line goacme.w:120
+//line goacme.w:119
 
 }
 }
 
 
 
-/*14:*/
+/*15:*/
 
 
-//line goacme.w:208
+//line goacme.w:209
 
 func TestNewOpen(t*testing.T){
 prepare(t)
@@ -99,14 +99,14 @@ f.Close()
 
 
 
-/*:14*/
+/*:15*/
 
 
 
-/*18:*/
+/*19:*/
 
 
-//line goacme.w:255
+//line goacme.w:256
 
 func TestReadWrite(t*testing.T){
 w,err:=New()
@@ -138,14 +138,14 @@ t.Fatal(errors.New("buffers don't match"))
 
 
 
-/*:18*/
+/*:19*/
 
 
 
-/*26:*/
+/*27:*/
 
 
-//line goacme.w:356
+//line goacme.w:357
 
 func TestDel(t*testing.T){
 w,err:=New()
@@ -162,43 +162,15 @@ t.Fatal(errors.New(fmt.Sprintf("window %d is still opened",w.id)))
 
 
 
-/*:26*/
+
+/*:27*/
 
 
 
-/*33:*/
+/*55:*/
 
 
-//line goacme.w:423
-
-func TestDeleteAll(t*testing.T){
-var l[10]int
-for i:=0;i<len(l);i++{
-w,err:=New()
-if err!=nil{
-t.Fatal(err)
-}
-l[i]= w.id
-}
-DeleteAll()
-for _,v:=range l{
-_,err:=Open(v)
-if err==nil{
-t.Fatal(errors.New(fmt.Sprintf("window %d is still opened",v)))
-}
-}
-}
-
-
-
-/*:33*/
-
-
-
-/*61:*/
-
-
-//line goacme.w:782
+//line goacme.w:712
 
 func TestEvent(t*testing.T){
 w,err:=New()
@@ -253,14 +225,14 @@ t.Fatal(err)
 
 
 
-/*:61*/
+/*:55*/
 
 
 
-/*65:*/
+/*59:*/
 
 
-//line goacme.w:873
+//line goacme.w:803
 
 func TestWriteReadAddr(t*testing.T){
 w,err:=New()
@@ -289,14 +261,14 @@ t.Fatal(errors.New(fmt.Sprintf("Something wrong with address: %v, %v",b,e)))
 
 
 
-/*:65*/
+/*:59*/
 
 
 
-/*68:*/
+/*62:*/
 
 
-//line goacme.w:951
+//line goacme.w:881
 
 func TestWriteReadCtl(t*testing.T){
 w,err:=New()
@@ -325,14 +297,45 @@ t.Fatal(errors.New(fmt.Sprintf("The window has to be clean\n")))
 
 
 
-/*:68*/
+/*:62*/
 
 
 
-/*82:*/
+/*72:*/
 
 
-//line goacme.w:1138
+//line goacme.w:1000
+
+func TestDeleteAll(t*testing.T){
+var l[10]int
+for i:=0;i<len(l);i++{
+w,err:=New()
+if err!=nil{
+t.Fatal(err)
+}
+l[i]= w.id
+}
+DeleteAll()
+for _,v:=range l{
+_,err:=Open(v)
+if err==nil{
+t.Fatal(errors.New(fmt.Sprintf("window %d is still opened",v)))
+}
+}
+}
+
+
+
+
+
+/*:72*/
+
+
+
+/*83:*/
+
+
+//line goacme.w:1142
 
 func TestLog(t*testing.T){
 l,err:=OpenLog()
@@ -361,14 +364,14 @@ t.Fatal(errors.New("unexpected window id"))
 
 
 
-/*:82*/
+/*:83*/
 
 
 
-/*89:*/
+/*90:*/
 
 
-//line goacme.w:1234
+//line goacme.w:1238
 
 func TestWindowsInfo(t*testing.T){
 l1,err:=WindowsInfo()
@@ -409,10 +412,10 @@ t.Fatal(errors.New(fmt.Sprintf(fmt.Sprintf("window with id=%d has been found",w.
 
 
 
-/*:89*/
+/*:90*/
 
 
-//line goacme.w:124
+//line goacme.w:123
 
 
 
