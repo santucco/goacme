@@ -1,4 +1,4 @@
-# This file is part of goacme package version 0.7
+# This file is part of goacme
 #
 # Copyright (c) 2013, 2014, 2020 Alexander Sychev. All rights reserved.
 #
@@ -27,37 +27,38 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+target=goacme
+
 IFILES= \
-	goacme.idx goacme.log goacme.toc goacme.tex goacme.scn
+	$(target).idx $(target).log $(target).toc $(target).tex $(target).scn
 
 .INTERMEDIATE: $(IFILES)
 
 TEXP?=xetex
 gcflags=-gcflags '-N -l'
 
-all: goacme doc test
+all: $(target) test
 
-goacme: goacme.go
+$(target): $(target).go
 	go build $(gcflags)
+	@echo done
 
-doc: goacme.pdf
+doc: $(target).pdf
 
 %.go: %.w
 	gotangle $< - $@
 
-%.pdf %.idx %.toc %.log: %.tex
+%.pdf %.idx %.toc %.log: %.tex header.tex
 	$(TEXP) $<
 
 %.tex %.scn: %.w
-	goweave $<   
+	goweave  $<
 
-test: goacme.w
+test: $(target).w
 	go test
 
-install: goacme
+install: $(target)
 	go install
 
 clean:
-	rm -rf *.go *.pdf goacme  $(IFILES)
-
-
+	rm -rf *.go *.pdf $(target)  $(IFILES)

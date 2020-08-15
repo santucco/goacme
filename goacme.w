@@ -1,80 +1,12 @@
-% This file is part of goacme package version 0.7
-\def\ver{0.7}
-\def\title{goacme (version \ver)}
-\def\topofcontents{\null\vfill
-	\centerline{\titlefont The {\ttitlefont goacme} package for manipulating {\ttitlefont plumb} messages}
-	\vskip 15pt
-	\centerline{(version \ver)}
-	\vfill}
-\def\botofcontents{\vfill
-\noindent
-Copyright \copyright\ 2013, 2014, 2020 Alexander Sychev. All rights reserved.
-\bigskip\noindent
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-\yskip\item{$\bullet$}Redistributions of source code must retain the
-above copyright
-notice, this list of conditions and the following disclaimer.
-\yskip\item{$\bullet$}Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
-\yskip\item{$\bullet$}The name of author may not be used to endorse
-or promote products derived from
-this software without specific prior written permission.
-
-\bigskip\noindent
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-}
-
-\pageno=\contentspagenumber \advance\pageno by 1
-\let\maybe=\iftrue
+\input header
 
 @** Introduction.
 It is a package to manupulate windows of \.{Acme}
 
-@ Legal information.
-@c
-// Copyright (c) 2013, 2014, 2020 Alexander Sychev. All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are
-// met:
-//
-//    * Redistributions of source code must retain the above copyright
-// notice, this list of conditions and the following disclaimer.
-//    * Redistributions in binary form must reproduce the above
-// copyright notice, this list of conditions and the following disclaimer
-// in the documentation and/or other materials provided with the
-// distribution.
-//    * The name of author may not be used to endorse or promote products derived from
-// this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 @** Implementation.
 @c
+
+@i license
 
 // Package |goacme| provides interface to |acme| programming environment
 package goacme
@@ -1228,7 +1160,7 @@ func WindowsInfo() (res Infos, err error) {
 		if _,err:=fmt.Sscanf(s, "%v %v %v %v %v", &id, &ts, &bs, &d, &m); err!=nil {
 			continue
 		}
-		res=append(res, &Info{Id:id, TagSize: ts, BodySize: bs, IsDirectory: d==1, IsDirty: m==1, Tag: strings.Split(s[12*5:], " ")})
+		res=append(res, &Info{Id:id, TagSize: ts, BodySize: bs, IsDirectory: d==1, IsDirty: m==1, Tag: strings.Fields(s[12*5:])})
 	}
 	sort.Sort(res)
 	return res, nil
